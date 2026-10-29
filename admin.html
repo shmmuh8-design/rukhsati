@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>رخصتي — الإدارة</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;800&display=swap">
+<script src="config.js"></script>
+<style>
+:root{--bg:#f4f1ea;--card:#fff;--ink:#1f2a33;--mute:#6b7680;--go:#1f8a4c;--stop:#c0392b;--sign:#b58600;--line:#e2ddd2}
+@media (prefers-color-scheme:dark){:root{--bg:#141a1f;--card:#1f2a33;--ink:#eef1f3;--mute:#9aa6b0;--line:#33424f}}
+[hidden]{display:none!important}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Cairo,system-ui,sans-serif;padding:16px;max-width:900px;margin-inline:auto}
+h1{font-weight:800;margin:.2em 0 .6em}input,button{font:inherit}input{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);width:100%}
+button{padding:8px 14px;border-radius:12px;border:0;font-weight:700;cursor:pointer;background:var(--ink);color:var(--bg)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.tabs button{background:var(--card);color:var(--ink);border:1px solid var(--line)}.tabs button.on{background:var(--ink);color:var(--bg)}
+.c{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:10px 0}.c h3{margin:0 0 4px}.m{color:var(--mute);font-size:.9rem;margin:2px 0}
+.st{border-radius:999px;padding:2px 10px;font-size:.8rem;font-weight:700}.pending{background:#f2b70533;color:var(--sign)}.approved{background:#1f8a4c22;color:var(--go)}.blocked{background:#c0392b22;color:var(--stop)}
+.ok{background:var(--go);color:#fff}.no{background:var(--stop);color:#fff}.gh{background:transparent;color:var(--ink);border:1px solid var(--line)}
+#msg{color:var(--stop);font-weight:700}
+</style>
+</head>
+<body>
+<h1>🚗 رخصتي — لوحة الإدارة</h1>
+<div id="login" class="row"><input id="pass" type="password" placeholder="رمز المدير (نفس رمز سُقيا)" style="flex:1;min-width:200px"><button id="go">دخول</button></div>
+<p id="msg"></p>
+<div id="app" hidden>
+  <div class="row tabs"><button data-t="pending" class="on">قيد المراجعة</button><button data-t="approved">المفعّلين</button><button data-t="blocked">الموقوفين</button><button data-t="reports">البلاغات</button><button class="gh" id="out">خروج</button></div>
+  <div id="list"></div>
+</div>
+<script>
+const SB=window.RK_SB, $=id=>document.getElementById(id);
+let PASS='', TAB='pending', ROWS=[];
+async function rpc(fn,a){const r=await fetch(SB.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify(a||{})});const t=await r.text();let j=null;try{j=t?JSON.parse(t):null}catch(e){}if(!r.ok)throw new Error((j&&j.message)||'خطأ');return j}
+function el(t,a,...k){const e=document.createElement(t);for(const[x,v]of Object.entries(a||{})){if(x==='text')e.textContent=v;else if(x.startsWith('on'))e[x]=v;else e.setAttribute(x,v)}k.flat().forEach(c=>c!=null&&e.append(c));return e}
+const ST={pending:'قيد المراجعة',approved:'مفعّل',blocked:'موقوف'}, GR={auto:'أوتوماتيك',manual:'عادي'};
+async function load(){ $('msg').textContent=''; try{ ROWS = TAB==='reports' ? await rpc('rk_admin_reports',{p_pass:PASS}) : (await rpc('rk_admin_list',{p_pass:PASS})).filter(r=>r.status===TAB); draw(); }catch(e){ $('msg').textContent=e.message; if(/رمز|admin|pass/i.test(e.message)){ $('app').hidden=true; $('login').hidden=false; } } }
+async function act(fn,a){ try{ await rpc(fn,{p_pass:PASS,...a}); load(); }catch(e){ $('msg').textContent=e.message; } }
+function draw(){
+  const box=$('list'); box.replaceChildren();
+  if(!ROWS.length) return box.append(el('p',{class:'m',text:'ما فيه شي هنا.'}));
+  if(TAB==='reports') return ROWS.forEach(r=>box.append(el('div',{class:'c'}, el('h3',{text:'🚩 '+(r.instructor||'(محذوف)')}), el('p',{class:'m',text:(r.phone?'+'+r.phone+' · ':'')+new Date(r.created_at).toLocaleString('ar-OM')}), el('p',{text:r.reason||'(بدون سبب)'}))));
+  ROWS.forEach(r=>{
+    const del=el('button',{class:'gh',text:'🗑️ حذف',onclick:e=>{ if(!e.target.dataset.s){ e.target.dataset.s=1; e.target.textContent='متأكد؟ اضغط مرة ثانية'; return; } act('rk_admin_delete',{p_id:r.id}); }});
+    box.append(el('div',{class:'c'},
+      el('div',{class:'row'}, el('h3',{text:(r.sex==='f'?'👩 ':'👨 ')+r.name}), el('span',{class:'st '+r.status,text:ST[r.status]}), r.reports? el('span',{class:'st blocked',text:'🚩 '+r.reports+' بلاغ'}):null),
+      el('p',{class:'m',text:'📞 +'+r.phone+' · 🪪 ترخيص: '+r.lic}),
+      el('p',{class:'m',text:'🚗 '+(r.car||'—')+' · '+r.gear.map(g=>GR[g]).join(' + ')+' · '+(+r.price)+' ر.ع · '+(r.available?'🟢 متوفر':'🔴 مشغول')}),
+      el('p',{class:'m',text:'📍 '+r.areas.map(a=>a.replace('gov:','كل ')).join('، ')}),
+      el('p',{class:'m',text:'سجّل: '+new Date(r.created_at).toLocaleString('ar-OM')}),
+      el('div',{class:'row'},
+        r.status!=='approved'?el('button',{class:'ok',text:'✅ تفعيل',onclick:()=>act('rk_admin_set_status',{p_id:r.id,p_status:'approved'})}):null,
+        r.status!=='blocked'?el('button',{class:'no',text:'⛔ إيقاف',onclick:()=>act('rk_admin_set_status',{p_id:r.id,p_status:'blocked'})}):null,
+        el('a',{href:'https://wa.me/'+r.phone,target:'_blank',rel:'noopener'},el('button',{class:'gh',text:'💬 واتساب'})), del)));
+  });
+}
+$('go').onclick=async()=>{ PASS=$('pass').value; try{ await rpc('rk_admin_list',{p_pass:PASS}); $('login').hidden=true; $('app').hidden=false; $('pass').value=''; load(); }catch(e){ $('msg').textContent=e.message; } };
+$('pass').onkeydown=e=>{ if(e.key==='Enter') $('go').click(); };
+document.querySelectorAll('.tabs [data-t]').forEach(b=>b.onclick=()=>{ TAB=b.dataset.t; document.querySelectorAll('.tabs [data-t]').forEach(x=>x.classList.toggle('on',x===b)); load(); });
+$('out').onclick=()=>{ PASS=''; ROWS=[]; $('list').replaceChildren(); $('app').hidden=true; $('login').hidden=false; };
+</script>
+</body>
+</html>

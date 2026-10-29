@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f2a33">
+<meta name="description" content="رخصتي — دليل معلّمي ومعلّمات السياقة المرخّصين في سلطنة عُمان">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<script src="config.js"></script>
+<title>رخصتي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800;900&display=swap">
+<style>
+/* Layout: a road-sign identity — asphalt header with a yellow lane stripe, then a filter "dashboard", then instructor cards set like licence cards; sheets slide up from the bottom for requesting and registering. */
+:root{
+  --asphalt:#1f2a33; --asphalt-2:#2b3945; --sign:#f2b705; --sign-ink:#1f2a33;
+  --bg:#f1f3f1; --surface:#ffffff; --fg:#17222a; --muted:#5c6b74; --line:#d8dfe1;
+  --go:#16824e; --stop:#c43a2b; --plate:#ffffff; --chip:#eef1ef;
+  --display:"Cairo",Tahoma,sans-serif;
+  --body:"Cairo",-apple-system,"Segoe UI",Tahoma,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f161b; --surface:#18232b; --fg:#e8eef0; --muted:#97a6ae; --line:#283741; --chip:#1f2c35;
+  --asphalt:#0b1116; --asphalt-2:#16212a; --go:#3cc684; --stop:#ff7a6a; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f161b; --surface:#18232b; --fg:#e8eef0; --muted:#97a6ae; --line:#283741; --chip:#1f2c35;
+  --asphalt:#0b1116; --asphalt-2:#16212a; --go:#3cc684; --stop:#ff7a6a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:600 15.5px/1.75 var(--body);direction:rtl}
+html[dir="ltr"] body{direction:ltr}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--sign);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:720px;margin:0 auto}
+
+/* header = road */
+.road{background:var(--asphalt);color:#f4f6f5;position:relative;overflow:hidden}
+.road .wrap{padding-block:18px 26px;display:flex;flex-direction:column;gap:14px}
+.road::after{content:"";position:absolute;inset:auto 0 10px 0;height:6px;background:repeating-linear-gradient(90deg,var(--sign) 0 46px,transparent 46px 78px);opacity:.9}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.plate{width:64px;height:64px;border-radius:14px;background:var(--sign);color:var(--sign-ink);display:grid;place-items:center;font:900 36px/1 var(--display);box-shadow:inset 0 0 0 3px var(--sign-ink),0 0 0 2px var(--sign)}
+.brand b{font:900 30px/1.2 var(--display)}
+.road p.big{font:900 clamp(3rem,14vw,4.4rem)/1.15 var(--display);letter-spacing:0;margin:0;opacity:1;color:#fff}
+.tagline{font-weight:700;opacity:.8;margin:0}
+.brand small{display:block;font-size:.78rem;opacity:.75;font-weight:500}
+.langsw{display:flex;direction:ltr;border:1.5px solid rgba(255,255,255,.35);border-radius:999px;padding:3px;gap:2px}
+.langsw button{border:0;background:transparent;color:#fff;border-radius:999px;padding:5px 12px;font-weight:700;font-size:.85rem}
+.langsw button[aria-pressed="true"]{background:var(--sign);color:var(--sign-ink)}
+.foot{text-align:center;color:var(--muted);font-size:.85rem;line-height:1.9;padding-block:8px 4px;border-top:1px solid var(--line)}
+.foot b{color:var(--fg)}
+.ghost{border:1.5px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:999px;padding:7px 14px;font-weight:600;font-size:.85rem}
+.road h1{margin:0;font:900 clamp(1.6rem,6.5vw,2.2rem)/1.35 var(--display);text-wrap:balance}
+.road p{margin:0;opacity:.82;max-width:34em}
+.demo{display:inline-flex;gap:6px;align-items:center;background:rgba(242,183,5,.16);color:var(--sign);border-radius:999px;padding:3px 12px;font-size:.78rem;font-weight:600}
+
+/* filters */
+main .wrap{padding-block:18px 60px;display:flex;flex-direction:column;gap:18px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:14px}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+label.l{font-weight:700;font-size:.88rem;display:block;margin-bottom:6px}
+select,input[type=text],input[type=tel],input[type=number]{width:100%;min-width:0;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);padding:10px 12px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{border:1.5px solid var(--line);background:var(--chip);border-radius:999px;padding:7px 14px;font-weight:600;font-size:.88rem}
+.seg button[aria-pressed="true"]{background:var(--sign);border-color:var(--sign);color:var(--sign-ink)}
+
+/* list */
+.head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.head h2{margin:0;font:900 1.5rem/1.35 var(--display)}
+.head span{color:var(--muted);font-size:.85rem}
+.list{display:grid;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.card .band{height:6px;background:var(--sign)}
+.card.f .band{background:#c86fb2}
+.card .in{padding:14px 16px;display:grid;gap:10px}
+.who{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+.av{width:50px;height:50px;border-radius:14px;background:var(--asphalt);color:var(--sign);display:grid;place-items:center;font:900 24px var(--display)}
+.who h3{margin:0;font-size:1.15rem;font-weight:900;line-height:1.4}
+.who .sub{color:var(--muted);font-size:.82rem}
+.price{text-align:center;line-height:1.2}
+.price b{display:block;font:900 1.7rem var(--display);color:var(--fg)}
+.price span{font-size:.72rem;color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:.76rem;font-weight:600;border-radius:999px;padding:3px 10px;background:var(--chip);color:var(--fg)}
+.tag.ok{background:color-mix(in srgb,var(--go) 14%,transparent);color:var(--go)}
+.tag.busy{background:color-mix(in srgb,var(--stop) 12%,transparent);color:var(--stop)}
+.tag.lic{background:var(--sign);color:var(--sign-ink)}
+.meta{color:var(--muted);font-size:.85rem;margin:0}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{border:0;border-radius:12px;padding:11px 12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.btn.main{background:var(--asphalt);color:#fff}
+.btn.wa{background:#1f9d55;color:#fff}
+.btn.line{background:transparent;border:1.5px solid var(--line);color:var(--fg)}
+.btn.sign{background:var(--sign);color:var(--sign-ink)}
+.mod{display:flex;gap:16px;justify-content:flex-end}
+.mod button{background:none;border:0;color:var(--muted);font-size:.8rem;text-decoration:underline;padding:0}
+.empty{border:1.5px dashed var(--line);border-radius:18px;padding:18px;text-align:center;color:var(--muted)}
+
+.join{background:var(--asphalt);color:#f4f6f5;border-radius:18px;padding:18px;display:grid;gap:8px}
+.join h3{margin:0;font:900 1.4rem var(--display)}
+.join p{margin:0;opacity:.85}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(8,14,18,.55);display:flex;align-items:flex-end;justify-content:center;z-index:30}
+.sheet{background:var(--surface);color:var(--fg);width:min(720px,100%);max-height:88vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px max(16px,env(safe-area-inset-left,0px)) calc(20px + env(safe-area-inset-bottom,0px));display:grid;gap:12px}
+.sheet h3{margin:0;font:900 1.4rem/1.4 var(--display)}
+.sheet .hint{color:var(--muted);font-size:.85rem;margin:0}
+pre.msg{white-space:pre-wrap;font:.9rem/1.8 var(--body);background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px;margin:0}
+.ck{display:flex;gap:10px;align-items:flex-start;font-size:.88rem}
+.ck input{margin-top:6px;accent-color:var(--asphalt)}
+.areas{display:flex;flex-wrap:wrap;gap:6px;max-height:160px;overflow:auto;padding:4px;border:1.5px solid var(--line);border-radius:12px}
+.areas button{border:1.5px solid var(--line);background:var(--chip);border-radius:10px;padding:4px 10px;font-size:.82rem}
+.areas button[aria-pressed="true"]{background:var(--sign);border-color:var(--sign);color:var(--sign-ink)}
+.ok-box{background:color-mix(in srgb,var(--go) 12%,transparent);color:var(--go);border-radius:14px;padding:12px 14px;font-weight:600}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:.88rem;z-index:40;max-width:90vw;text-align:center}
+@media (max-width:420px){.who{grid-template-columns:auto minmax(0,1fr)}.price{grid-column:1/-1;text-align:start;display:flex;gap:8px;align-items:baseline}}
+.who>div:nth-child(2){text-align:start}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.5}}}
+</style>
+</head>
+<body>
+
+<header class="road pad">
+  <div class="wrap">
+    <div class="top">
+      <div class="langsw" role="group" aria-label="Language / اللغة"><button type="button" id="lnEn" lang="en">English</button><button type="button" id="lnAr" lang="ar">العربية</button></div>
+      <button class="ghost" type="button" id="joinTop" data-t="iamT">🚗 أنا معلّم</button>
+    </div>
+    <div class="hero">
+      <div class="plate" aria-hidden="true" id="plate">ت</div>
+      <p class="big" id="brand" data-t="brand">رخصتي</p>
+      <p class="tagline" data-t="tag">تعليم السياقة في عُمان</p>
+      <h1 data-t="h1">معلّم سياقة مرخّص قريب منك</h1>
+      <p data-t="lead">اختار ولايتك ونوع الجير، وقارن أسعار الحصص، وكلّم المعلّم أو المعلّمة مباشرة.</p>
+    </div>
+  </div>
+</header>
+
+<main class="pad">
+  <div class="wrap">
+    <section class="panel">
+      <div class="row2">
+        <div><label class="l" for="gov" data-t="govL">المحافظة</label><select id="gov"></select></div>
+        <div><label class="l" for="area" data-t="areaL">الولاية</label><select id="area"></select></div>
+      </div>
+      <div><span class="l" style="font-weight:700;font-size:.88rem" data-t="gearL">نوع الجير</span><div class="seg" id="gear"></div></div>
+      <div><span class="l" style="font-weight:700;font-size:.88rem" data-t="sexL">المعلّم</span><div class="seg" id="sex"></div></div>
+    </section>
+
+    <section aria-labelledby="resT" style="display:grid;gap:12px">
+      <div class="head"><h2 id="resT">المعلّمين</h2><span id="resN" class="num"></span></div>
+      <div class="list" id="list"></div>
+    </section>
+
+    <section class="join">
+      <h3 data-t="joinH">عندك سيارة تعليم وترخيص؟</h3>
+      <p data-t="joinP">سجّل كمعلّم أو معلّمة، وحدد ولاياتك وسعر الحصة، ويتصل فيك المتعلّمين مباشرة. حسابك يظهر بعد ما تتأكد الإدارة من ترخيصك.</p>
+      <button class="btn sign" type="button" id="joinBtn" style="justify-self:start" data-t="joinB">سجّل كمعلّم سياقة</button>
+    </section>
+    <footer class="foot"><b data-t="cpy1">© 2026 رخصتي — جميع الحقوق محفوظة</b><br><span data-t="cpy2">سالم الجابري · مسقط، سلطنة عُمان</span><br><span dir="ltr">design.omani1@gmail.com</span></footer>
+  </div>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const GOV = {"مسقط":["مسقط","مطرح","بوشر","السيب","العامرات","قريات"],"ظفار":["صلالة","طاقة","مرباط","رخيوت","ثمريت","ضلكوت","المزيونة","مقشن","شليم وجزر الحلانيات","سدح"],"مسندم":["خصب","دبا","بخا","مدحاء"],"البريمي":["البريمي","محضة","السنينة"],"الداخلية":["نزوى","بهلاء","منح","الحمراء","أدم","إزكي","سمائل","بدبد","الجبل الأخضر"],"شمال الباطنة":["صحار","شناص","لوى","صحم","الخابورة","السويق"],"جنوب الباطنة":["الرستاق","العوابي","نخل","وادي المعاول","بركاء","المصنعة"],"جنوب الشرقية":["صور","الكامل والوافي","جعلان بني بو حسن","جعلان بني بو علي","مصيرة"],"شمال الشرقية":["إبراء","المضيبي","بدية","القابل","وادي بني خالد","دماء والطائيين"],"الظاهرة":["عبري","ينقل","ضنك"],"الوسطى":["هيماء","محوت","الدقم","الجازر"]};
+const GN = {"مسقط":"Muscat","مطرح":"Muttrah","بوشر":"Bawshar","السيب":"Seeb","العامرات":"Al Amerat","قريات":"Quriyat", "ظفار":"Dhofar","صلالة":"Salalah","طاقة":"Taqah","مرباط":"Mirbat","رخيوت":"Rakhyut","ثمريت":"Thumrait","ضلكوت":"Dhalkut","المزيونة":"Al Mazyunah","مقشن":"Muqshin","شليم وجزر الحلانيات":"Shalim & Hallaniyat Islands","سدح":"Sadah", "مسندم":"Musandam","خصب":"Khasab","دبا":"Dibba","بخا":"Bukha","مدحاء":"Madha", "البريمي":"Al Buraimi","محضة":"Mahdah","السنينة":"As Sunaynah", "الداخلية":"Ad Dakhiliyah","نزوى":"Nizwa","بهلاء":"Bahla","منح":"Manah","الحمراء":"Al Hamra","أدم":"Adam","إزكي":"Izki","سمائل":"Samail","بدبد":"Bidbid","الجبل الأخضر":"Al Jabal Al Akhdar", "شمال الباطنة":"North Al Batinah","صحار":"Sohar","شناص":"Shinas","لوى":"Liwa","صحم":"Saham","الخابورة":"Al Khaburah","السويق":"As Suwaiq", "جنوب الباطنة":"South Al Batinah","الرستاق":"Rustaq","العوابي":"Al Awabi","نخل":"Nakhal","وادي المعاول":"Wadi Al Maawil","بركاء":"Barka","المصنعة":"Al Musanaah", "جنوب الشرقية":"South Ash Sharqiyah","صور":"Sur","الكامل والوافي":"Al Kamil Wal Wafi","جعلان بني بو حسن":"Jalan Bani Bu Hassan","جعلان بني بو علي":"Jalan Bani Bu Ali","مصيرة":"Masirah", "شمال الشرقية":"North Ash Sharqiyah","إبراء":"Ibra","المضيبي":"Al Mudaybi","بدية":"Bidiyah","القابل":"Al Qabil","وادي بني خالد":"Wadi Bani Khalid","دماء والطائيين":"Dima Wa At Taiyin", "الظاهرة":"Ad Dhahirah","عبري":"Ibri","ينقل":"Yanqul","ضنك":"Dhank", "الوسطى":"Al Wusta","هيماء":"Haima","محوت":"Mahout","الدقم":"Duqm","الجازر":"Al Jazir"};
+let DATA = [], LOADING = true, LOAD_ERR = '';
+const SB = window.RK_SB || {};
+async function rpc(fn, args){
+  let r;
+  try{ r = await fetch(SB.url + '/rest/v1/rpc/' + fn, { method:'POST', headers:{ apikey:SB.key, 'Content-Type':'application/json' }, body:JSON.stringify(args || {}) }); }
+  catch(e){ throw new Error(L('ما فيه اتصال بالإنترنت، حاول مرة ثانية','No internet connection, please try again')); }
+  const t = await r.text(); let j = null; try{ j = t ? JSON.parse(t) : null; }catch(e){}
+  if(!r.ok) throw new Error((j && j.message) || L('صار خطأ، حاول مرة ثانية','Something went wrong, please try again'));
+  return j;
+}
+async function refresh(){
+  try{ DATA = ((await rpc('rk_list')) || []).map(d => ({ ...d, price:+d.price, pack_price:d.pack_price == null ? null : +d.pack_price })); LOAD_ERR = ''; }
+  catch(e){ LOAD_ERR = e.message; }
+  LOADING = false; draw();
+}
+let ME = null; try{ ME = JSON.parse(localStorage.getItem('rk-me') || 'null'); }catch(e){}
+const saveMe = v => { ME = v; try{ v ? localStorage.setItem('rk-me', JSON.stringify(v)) : localStorage.removeItem('rk-me'); }catch(e){} };
+const normPhone = p => { let d = String(p||'').replace(/[٠-٩]/g, c => '٠١٢٣٤٥٦٧٨٩'.indexOf(c)).replace(/\D/g,''); if(d.startsWith('00')) d = d.slice(2); if(/^[79]\d{7}$/.test(d)) d = '968' + d; return d; };
+const $ = id => document.getElementById(id);
+const LS = { get(k,d){ try{ const v = JSON.parse(localStorage.getItem(k)||'null'); return v==null?d:v; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} } };
+let LANG = LS.get('rk-lang', '') || (/^ar/i.test(navigator.language || 'ar') ? 'ar' : 'en');
+const EN = () => LANG === 'en';
+const L = (a, e) => EN() ? e : a;
+const pick2 = v => Array.isArray(v) ? v[EN() ? 1 : 0] : v;
+const gn = x => EN() ? (GN[x] || x) : x;
+const T = {
+  brand:['رخصتي','Rukhsati'], tag:['تعليم السياقة في عُمان','Driving lessons in Oman'], iamT:['🚗 أنا معلّم','🚗 I teach'],
+  h1:['معلّم سياقة مرخّص قريب منك','A licensed driving instructor near you'],
+  lead:['اختار ولايتك ونوع الجير، وقارن أسعار الحصص، وكلّم المعلّم أو المعلّمة مباشرة.','Pick your wilayat and gearbox, compare lesson prices, and contact the instructor directly.'],
+  demo:['نموذج تجريبي · المعلّمين أمثلة','Prototype · sample instructors'],
+  govL:['المحافظة','Governorate'], areaL:['الولاية','Wilayat'], gearL:['نوع الجير','Gearbox'], sexL:['المعلّم','Instructor'],
+  joinH:['عندك سيارة تعليم وترخيص؟','Licensed instructor with a training car?'],
+  joinP:['سجّل كمعلّم أو معلّمة، وحدد ولاياتك وسعر الحصة، ويتصل فيك المتعلّمين مباشرة. حسابك يظهر بعد ما تتأكد الإدارة من ترخيصك.','Join as an instructor, set your wilayats and lesson price, and learners contact you directly. Your profile appears once we verify your licence.'],
+  joinB:['سجّل كمعلّم سياقة','Join as an instructor'],
+  cpy1:['© 2026 رخصتي — جميع الحقوق محفوظة','© 2026 Rukhsati — All rights reserved'], cpy2:['سالم الجابري · مسقط، سلطنة عُمان','Salem Aljabri · Muscat, Sultanate of Oman']
+};
+const S = Object.assign({ gov:'مسقط', area:'السيب', gear:'any', sex:'any' }, LS.get('rk-s', {}));
+const omr = n => (Math.round(n*1000)/1000).toLocaleString('en',{maximumFractionDigits:3});
+const OMR = () => L('ر.ع','OMR');
+function toast(t){ const e=$('toast'); e.textContent=t; e.hidden=false; clearTimeout(e._t); e._t=setTimeout(()=>e.hidden=true,2600); }
+function el(tag, attrs, ...kids){ const e=document.createElement(tag); for(const [k,v] of Object.entries(attrs||{})){ if(k==='text') e.textContent=v; else if(k.startsWith('on')) e[k]=v; else e.setAttribute(k,v); } kids.flat().forEach(k=>k!=null&&e.append(k)); return e; }
+
+function applyLang(){
+  document.documentElement.lang = LANG; document.documentElement.dir = EN() ? 'ltr' : 'rtl';
+  document.querySelectorAll('[data-t]').forEach(n => { const v = T[n.dataset.t]; if(v) n.textContent = v[EN()?1:0]; });
+  $('plate').textContent = L('ت','R'); $('lnEn').setAttribute('aria-pressed', String(EN())); $('lnAr').setAttribute('aria-pressed', String(!EN()));
+  document.title = L('رخصتي','Rukhsati');
+  fill(); draw();
+}
+const setLang = l => { LANG = l; LS.set('rk-lang', LANG); applyLang(); };
+$('lnEn').onclick = () => setLang('en'); $('lnAr').onclick = () => setLang('ar');
+
+function fill(){
+  $('gov').replaceChildren(...Object.keys(GOV).map(g=>el('option',{value:g,text:gn(g)})));
+  $('gov').value = S.gov;
+  if(!GOV[S.gov].includes(S.area)) S.area = GOV[S.gov][0];
+  $('area').replaceChildren(...GOV[S.gov].map(a=>el('option',{value:a,text:gn(a)})));
+  $('area').value = S.area;
+  const seg = (id, key, opts) => $(id).replaceChildren(...opts.map(([v,t])=>el('button',{type:'button','aria-pressed':String(S[key]===v),text:t,onclick:()=>{S[key]=v;save();fill();draw();}})));
+  seg('gear','gear',[['any',L('الكل','All')],['auto',L('أوتوماتيك','Automatic')],['manual',L('عادي (قير)','Manual')]]);
+  seg('sex','sex',[['any',L('الكل','All')],['m',L('معلّم','Male')],['f',L('معلّمة','Female')]]);
+}
+function save(){ LS.set('rk-s', S); }
+$('gov').onchange = e => { S.gov=e.target.value; S.area=GOV[S.gov][0]; save(); fill(); draw(); };
+$('area').onchange = e => { S.area=e.target.value; save(); draw(); };
+
+const covers = d => d.areas.includes(S.area) || d.areas.includes('gov:'+S.gov);
+const areaTxt = d => d.areas.map(a=>a.startsWith('gov:')?L('كل ','All ')+gn(a.slice(4)):gn(a)).join(L('، ',', '));
+const gearTxt = g => g.map(x=>x==='auto'?L('أوتوماتيك','Automatic'):L('عادي','Manual')).join(' + ');
+function draw(){
+  const hidden = new Set(LS.get('rk-hide', []));
+  const Lst = DATA.filter(d => !hidden.has(d.id) && covers(d) && (S.gear==='any'||d.gear.includes(S.gear)) && (S.sex==='any'||d.sex===S.sex))
+    .sort((a,b)=>(b.available-a.available)||a.price-b.price);
+  $('resT').textContent = L('المعلّمين في ','Instructors in ') + gn(S.area);
+  $('resN').textContent = !Lst.length ? '' : EN() ? Lst.length + (Lst.length>1?' instructors':' instructor') : Lst.length + (Lst.length>2?' معلّمين':Lst.length===2?' معلّمَين':' معلّم');
+  const box = $('list'); box.replaceChildren();
+  if(LOADING){ box.append(el('div',{class:'empty',text:L('جاري التحميل…','Loading…')})); return; }
+  if(LOAD_ERR){ box.append(el('div',{class:'empty',text:LOAD_ERR})); return; }
+  if(!Lst.length){ box.append(el('div',{class:'empty',text:L('ما فيه معلّم مسجّل في '+gn(S.area)+' بهالاختيارات حاليًا. جرّب «الكل» أو ولاية قريبة.','No instructor is listed in '+gn(S.area)+' for these choices yet. Try “All” or a nearby wilayat.')})); return; }
+  Lst.forEach(d => {
+    const nm = d.name;
+    box.append(el('article',{class:'card'+(d.sex==='f'?' f':'')}, el('div',{class:'band'}),
+      el('div',{class:'in'},
+        el('div',{class:'who'},
+          el('div',{class:'av',text:nm.replace(/^(أم|أبو|Umm|Abu)\s+/,'').trim()[0]}),
+          el('div',{}, el('h3',{text:nm}), el('div',{class:'sub',text:(d.sex==='f'?L('معلّمة','Female'):L('معلّم','Male'))+(d.years != null ? ' · '+L('خبرة '+d.years+' سنة',d.years+' yrs experience') : '')})),
+          el('div',{class:'price'}, el('b',{class:'num',text:omr(d.price)}), el('span',{text:L('ر.ع للحصة','OMR / lesson')}))),
+        el('div',{class:'tags'},
+          el('span',{class:'tag lic',text:L('✓ ترخيص معتمد','✓ Licensed')}),
+          el('span',{class:'tag '+(d.available?'ok':'busy'),text:d.available?L('يستقبل متعلّمين','Taking learners'):L('مشغول الحين','Busy now')}),
+          el('span',{class:'tag',text:'⚙️ '+gearTxt(d.gear)}),
+          d.car ? el('span',{class:'tag',text:'🚗 '+d.car}) : null),
+        el('p',{class:'meta',text:[d.pack && d.pack_price ? L('باقة '+d.pack+' حصص بـ '+omr(d.pack_price)+' ر.ع','Package of '+d.pack+' lessons: '+omr(d.pack_price)+' OMR') : '', d.langs ? L('اللغات: ','Languages: ')+d.langs : '', L('يغطي: ','Covers: ')+areaTxt(d)].filter(Boolean).join(' · ')}),
+        el('div',{class:'acts'},
+          el('button',{class:'btn main',type:'button',text:L('📝 اطلب حصص','📝 Request lessons'),onclick:()=>request(d)}),
+          el('button',{class:'btn line',type:'button',text:L('📞 الرقم','📞 Number'),onclick:()=>showNum(d)})),
+        el('div',{class:'mod'},
+          el('button',{type:'button',text:L('🚩 إبلاغ','🚩 Report'),onclick:()=>report(d)}),
+          el('button',{type:'button',text:L('🚫 إخفاء','🚫 Hide'),onclick:()=>{ const h=LS.get('rk-hide',[]); h.push(d.id); LS.set('rk-hide',h); draw(); toast(L('انخفى ','Hidden: ')+nm); }})))));
+  });
+}
+
+function sheet(build){ const s=el('div',{class:'scrim'}); const b=el('div',{class:'sheet',role:'dialog','aria-modal':'true'}); const close=()=>s.remove(); s.onclick=e=>{ if(e.target===s) close(); }; build(b,close); s.append(b); document.body.append(s); }
+function copy(t){ (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast(L('انسخ ✅','Copied ✅')),()=>toast(L('ما قدرت أنسخ، حدده وانسخه','Couldn’t copy — select and copy it'))); }
+const closeBtn = close => el('button',{class:'btn line',type:'button',text:L('إغلاق','Close'),onclick:close});
+
+function showNum(d){
+  sheet((b,close)=>{ const n='+'+d.phone;
+    b.append(el('h3',{text:d.name}), el('p',{class:'hint',text:L('الرقم للتواصل المباشر:','Contact number:')}),
+      el('pre',{class:'msg num',dir:'ltr',text:n}),
+      el('div',{class:'acts'}, el('button',{class:'btn main',type:'button',text:L('📋 نسخ الرقم','📋 Copy number'),onclick:()=>copy(n)}), el('a',{class:'btn wa',href:'https://wa.me/'+d.phone,target:'_blank',rel:'noopener',text:L('💬 واتساب','💬 WhatsApp')})),
+      closeBtn(close));
+  });
+}
+
+function request(d){
+  sheet((b,close)=>{
+    const opts = (id, list) => el('select',{id}, ...list.map(([v,t])=>el('option',{value:v,text:t})));
+    const lvl = opts('rqLvl',[['0',L('مبتدئ تمامًا','Complete beginner')],['1',L('أعرف أسوق شوي','I can drive a little')],['2',L('أبي أتدرب للاختبار بس','Test practice only')]]);
+    const gear = opts('rqGear', d.gear.map(g=>[g, g==='auto'?L('أوتوماتيك','Automatic'):L('عادي (قير)','Manual')]));
+    const time = opts('rqTime',[['a',L('الصبح','Morning')],['b',L('العصر','Afternoon')],['c',L('المسا','Evening')],['d',L('عطلة نهاية الأسبوع','Weekend')]]);
+    const pack = opts('rqPack',[['1',L('حصة وحدة · ','Single lesson · ')+omr(d.price)+' '+OMR()]].concat(d.pack && d.pack_price ? [['p',L('باقة '+d.pack+' حصص · ','Package of '+d.pack+' · ')+omr(d.pack_price)+' '+OMR()]] : []));
+    const name = el('input',{type:'text',id:'rqName',placeholder:L('اسمك (اختياري)','Your name (optional)')});
+    const out = el('pre',{class:'msg'});
+    const age = el('input',{type:'checkbox',id:'rqAge'});
+    const tx = s => s.selectedOptions[0].textContent;
+    const make = () => { const lines = EN()
+      ? ['Hello '+(d.sex==='f'?'Ms':'Mr')+' '+d.name+', I found you on “Rukhsati” 🚗','', '• I want: '+tx(pack), '• Level: '+tx(lvl), '• Gearbox: '+tx(gear), '• Best time: '+tx(time), '• Area: '+gn(S.area)+' — '+gn(S.gov), name.value.trim()?'• Name: '+name.value.trim():'']
+      : ['السلام عليكم '+(d.sex==='f'?'أستاذة':'أستاذ')+'، شفت حسابك في «رخصتي» 🚗','', '• أبي: '+tx(pack), '• المستوى: '+tx(lvl), '• الجير: '+tx(gear), '• الوقت المناسب: '+tx(time), '• المنطقة: '+S.area+' — '+S.gov, name.value.trim()?'• الاسم: '+name.value.trim():''];
+      out.textContent = lines.filter((x,i)=>x||i===1).join('\n'); };
+    [lvl,gear,time,pack].forEach(x=>x.onchange=make); name.oninput=make; make();
+    const fld = (id, t, c) => el('div',{}, el('label',{class:'l',for:id,text:t}), c);
+    b.append(el('h3',{text:L('اطلب حصص من ','Request lessons from ')+d.name}),
+      el('div',{class:'row2'}, fld('rqPack',L('الحصص','Lessons'),pack), fld('rqGear',L('الجير','Gearbox'),gear)),
+      el('div',{class:'row2'}, fld('rqLvl',L('مستواك','Your level'),lvl), fld('rqTime',L('الوقت','Time'),time)),
+      name, el('p',{class:'hint',text:L('هذي الرسالة اللي توصل المعلّم:','This is the message the instructor gets:')}), out,
+      el('label',{class:'ck'}, age, el('span',{text:L('أقر إن عمري 18 سنة أو أكثر، حسب شروط الحصول على رخصة السياقة لدى شرطة عُمان السلطانية.','I confirm I am 18 or older, as required for a driving licence by the Royal Oman Police.')})),
+      el('div',{class:'acts'}, el('a',{class:'btn wa',href:'#',target:'_blank',rel:'noopener',text:L('💬 أرسل بالواتساب','💬 Send on WhatsApp'),onclick:e=>{ if(!age.checked){ e.preventDefault(); toast(L('لازم يكون عمرك 18 سنة أو أكثر، أكّد العمر أول','You must be 18 or older — please confirm your age first')); return; } e.currentTarget.href='https://wa.me/'+d.phone+'?text='+encodeURIComponent(out.textContent); }}), el('button',{class:'btn line',type:'button',text:L('📋 نسخ الرسالة','📋 Copy message'),onclick:()=>{ if(!age.checked) return toast(L('لازم يكون عمرك 18 سنة أو أكثر، أكّد العمر أول','You must be 18 or older — please confirm your age first')); copy(out.textContent); }})),
+      el('p',{class:'hint',text:L('الاتفاق على المواعيد والدفع يكون بينك وبين المعلّم مباشرة.','Schedule and payment are agreed directly between you and the instructor.')}),
+      closeBtn(close));
+  });
+}
+
+function report(d){
+  sheet((b,close)=>{
+    const t = el('input',{type:'text',id:'rpWhy',placeholder:L('مثال: رقم غلط، سلوك غير لائق، ترخيص غير صحيح','e.g. wrong number, inappropriate behaviour, invalid licence')});
+    b.append(el('h3',{text:L('إبلاغ عن ','Report ')+d.name}), el('p',{class:'hint',text:L('البلاغ يوصل للإدارة ونراجعه خلال 24 ساعة.','Reports reach our team and are reviewed within 24 hours.')}), t,
+      el('div',{class:'acts'}, el('button',{class:'btn main',type:'button',text:L('أرسل البلاغ','Send report'),onclick:async()=>{ try{ await rpc('rk_report',{p_id:d.id,p_reason:t.value.trim()}); toast(L('وصل البلاغ، شكرًا لك 🙏','Report sent, thank you 🙏')); close(); }catch(e){ toast(e.message); } }}), closeBtn(close)));
+  });
+}
+function instForm(b, close, A){
+  const pick = new Set(A ? A.areas : []); let gov = 'مسقط';
+  const gsel = el('select',{id:'jGov'}, ...Object.keys(GOV).map(g=>el('option',{value:g,text:gn(g)})));
+  const areas = el('div',{class:'areas'});
+  const drawA = () => areas.replaceChildren(...['gov:'+gov,...GOV[gov]].map(a=>el('button',{type:'button','aria-pressed':String(pick.has(a)),text:a.startsWith('gov:')?L('كل ','All ')+gn(gov):gn(a),onclick:e=>{ pick.has(a)?pick.delete(a):pick.add(a); e.currentTarget.setAttribute('aria-pressed',String(pick.has(a))); }})));
+  gsel.onchange = () => { gov = gsel.value; drawA(); }; drawA();
+  const sexSel = el('select',{id:'jSex'}, el('option',{value:'m',text:L('معلّم','Male instructor')}), el('option',{value:'f',text:L('معلّمة','Female instructor')}));
+  const gearSel = el('select',{id:'jGear'}, el('option',{value:'auto',text:L('أوتوماتيك','Automatic')}), el('option',{value:'manual',text:L('عادي (قير)','Manual')}), el('option',{value:'both',text:L('الاثنين','Both')}));
+  const inp = (id, ph, extra) => el('input',Object.assign({type:'text',id,placeholder:ph},extra||{}));
+  const nm=inp('jName',L('الاسم الكامل','Full name')), lic=inp('jLic',L('رقم ترخيص معلّم السياقة','Instructor licence number'),{dir:'ltr'}), car=inp('jCar',L('مثال: تويوتا يارس 2023','e.g. Toyota Yaris 2023'));
+  const langs=inp('jLangs',L('مثال: عربي، إنجليزي','e.g. Arabic, English'));
+  const ph=el('input',{type:'tel',id:'jPhone',dir:'ltr',placeholder:'9XXXXXXX'});
+  const num = (id, ph2, step) => el('input',{type:'number',id,min:'0',step:step||'0.5',placeholder:ph2,dir:'ltr'});
+  const pr=num('jPrice',L('مثال: 7','e.g. 7')), yrs=num('jYears',L('مثال: 5','e.g. 5'),'1'), pk=num('jPack',L('مثال: 10','e.g. 10'),'1'), pkp=num('jPackP',L('مثال: 65','e.g. 65'));
+  if(A){ nm.value=A.name; sexSel.value=A.sex; sexSel.disabled=true; ph.value=A.phone.replace(/^968/,''); ph.disabled=true; lic.value=A.lic; lic.disabled=true; car.value=A.car||''; gearSel.value=A.gear.length>1?'both':A.gear[0]; pr.value=A.price; yrs.value=A.years??''; pk.value=A.pack??''; pkp.value=A.pack_price??''; langs.value=A.langs||''; }
+  const agree = el('input',{type:'checkbox',id:'jOk'}); if(A) agree.checked = true;
+  const fld = (id, t, c) => el('div',{}, el('label',{class:'l',for:id,text:t}), c);
+  const form = el('div',{style:'display:grid;gap:12px'},
+    el('div',{class:'row2'}, fld('jName',L('الاسم','Name'),nm), fld('jSex',L('أنا','I am'),sexSel)),
+    el('div',{class:'row2'}, fld('jPhone',L('رقم الهاتف','Phone'),ph), fld('jLic',L('رقم الترخيص','Licence no.'),lic)),
+    el('div',{class:'row2'}, fld('jCar',L('سيارة التعليم','Training car'),car), fld('jGear',L('الجير','Gearbox'),gearSel)),
+    fld('jGov',L('الولايات اللي تغطيها','Wilayats you cover'),gsel), areas,
+    el('div',{class:'row2'}, fld('jPrice',L('سعر الحصة (ر.ع)','Lesson price (OMR)'),pr), fld('jYears',L('سنوات الخبرة','Years of experience'),yrs)),
+    el('div',{class:'row2'}, fld('jPack',L('حصص الباقة (اختياري)','Package lessons (optional)'),pk), fld('jPackP',L('سعر الباقة (ر.ع)','Package price (OMR)'),pkp)),
+    fld('jLangs',L('اللغات (اختياري)','Languages (optional)'),langs),
+    A ? null : el('label',{class:'ck'}, agree, el('span',{text:L('أقر إن عندي ترخيص معلّم سياقة ساري وسيارة تعليم معتمدة، وإن بياناتي صحيحة. أي مخالفة توقف الحساب.','I confirm I hold a valid driving-instructor licence and an approved training car, and that my details are correct. Any violation suspends the account.')})));
+  const send = el('button',{class:'btn sign',type:'button',text:A?L('💾 حفظ التعديلات','💾 Save changes'):L('📤 أرسل التسجيل','📤 Submit'),onclick:async()=>{
+    const phone = A ? A.phone : normPhone(ph.value);
+    if(!nm.value.trim()) return toast(L('اكتب اسمك','Enter your name'));
+    if(!/^968[79]\d{7}$/.test(phone)) return toast(L('رقم الهاتف لازم 8 أرقام','Phone must be 8 digits'));
+    if(lic.value.trim().length<3) return toast(L('اكتب رقم ترخيص معلّم السياقة','Enter your instructor licence number'));
+    if(!pick.size) return toast(L('اختار ولاية وحدة على الأقل','Pick at least one wilayat'));
+    if(!(+pr.value>0)) return toast(L('اكتب سعر الحصة','Enter the lesson price'));
+    if((pk.value && !(+pkp.value>0)) || (pkp.value && !(+pk.value>1))) return toast(L('اكتب عدد حصص الباقة وسعرها، أو خلّهم فاضيين','Enter both package lessons and price, or leave both empty'));
+    if(!agree.checked) return toast(L('لازم توافق على الإقرار','Please confirm the declaration'));
+    const gear = gearSel.value==='both' ? ['auto','manual'] : [gearSel.value];
+    const common = { p_name:nm.value.trim(), p_car:car.value.trim(), p_gear:gear, p_areas:[...pick], p_price:+pr.value, p_pack:pk.value?+pk.value:null, p_pack_price:pkp.value?+pkp.value:null, p_langs:langs.value.trim(), p_years:yrs.value===''?null:+yrs.value };
+    send.disabled = true;
+    try{
+      if(A){ await rpc('rk_update', { ...common, p_phone:ME.phone, p_code:ME.code }); toast(L('انحفظت التعديلات ✅','Saved ✅')); close(); refresh(); account(); }
+      else {
+        const r = await rpc('rk_register', { ...common, p_sex:sexSel.value, p_phone:phone, p_lic:lic.value.trim() });
+        saveMe({ phone, code:r.code }); form.remove(); send.remove(); $('jLogin')?.remove();
+        b.insertBefore(el('div',{style:'display:grid;gap:10px'},
+          el('div',{class:'ok-box',text:L('✅ وصل تسجيلك. حسابك بيظهر للمتعلّمين بعد ما تتأكد الإدارة من ترخيصك.','✅ Received. Your profile appears to learners after we verify your licence.')}),
+          el('p',{style:'margin:0;font-weight:800',text:L('رمز الدخول حقك:','Your login code:')}),
+          el('pre',{class:'msg num',dir:'ltr',style:'font-size:1.6rem;text-align:center;letter-spacing:.15em',text:r.code}),
+          el('p',{class:'hint',text:L('⚠️ صوّر الشاشة أو احفظ الرمز. تحتاجه لو غيّرت جوالك.','⚠️ Save this code. You need it if you change phones.')}),
+          el('button',{class:'btn main',type:'button',text:L('📋 نسخ الرمز','📋 Copy code'),onclick:()=>copy(r.code)})), b.lastChild);
+      }
+    }catch(e){ toast(e.message); }
+    send.disabled = false;
+  }});
+  b.append(...[el('h3',{text:A?L('✏️ تعديل بياناتي','✏️ Edit my details'):L('سجّل كمعلّم سياقة','Join as an instructor')}),
+    A ? null : el('p',{class:'hint',text:L('للمعلّمين والمعلّمات المرخّصين بس. التسجيل مجاني.','For licensed instructors only. Joining is free.')}),
+    A ? null : el('button',{class:'btn line',id:'jLogin',type:'button',text:L('مسجّل من قبل؟ ادخل برمزك','Already registered? Log in'),onclick:()=>{ close(); login(); }}),
+    form, send, closeBtn(close)].filter(Boolean));
+}
+function join(){ if(ME) return account(); sheet((b,close)=>instForm(b, close, null)); }
+function login(){
+  sheet((b,close)=>{
+    const ph=el('input',{type:'tel',id:'lPhone',dir:'ltr',placeholder:'9XXXXXXX'}), cd=el('input',{type:'text',id:'lCode',dir:'ltr',placeholder:L('رمز الدخول','Login code'),autocapitalize:'characters'});
+    b.append(el('h3',{text:L('🔑 دخول المعلّم','🔑 Instructor login')}), ph, cd,
+      el('button',{class:'btn main',type:'button',text:L('دخول','Log in'),onclick:async()=>{ const phone=normPhone(ph.value), code=cd.value.trim().toUpperCase();
+        try{ await rpc('rk_me',{p_phone:phone,p_code:code}); saveMe({phone,code}); close(); account(); }catch(e){ toast(e.message); } }}),
+      el('p',{class:'hint',text:L('نسيت الرمز؟ راسلنا على design.omani1@gmail.com','Forgot your code? Email design.omani1@gmail.com')}), closeBtn(close));
+  });
+}
+function account(){
+  sheet(async (b,close)=>{
+    b.append(el('h3',{text:L('🚗 حسابي','🚗 My account')}), el('p',{class:'hint',text:L('جاري التحميل…','Loading…')}));
+    let A; try{ A = await rpc('rk_me',{p_phone:ME.phone,p_code:ME.code}); }catch(e){ toast(e.message); if(/غلط/.test(e.message)){ saveMe(null); close(); login(); } return; }
+    A.price=+A.price; if(A.pack_price!=null) A.pack_price=+A.pack_price;
+    const st = { pending:['⏳ حسابك قيد المراجعة — بيظهر للمتعلّمين بعد ما تتأكد الإدارة من ترخيصك.','⏳ Under review — you will appear once your licence is verified.'], approved:['✅ حسابك فعّال وظاهر للمتعلّمين.','✅ Active and visible to learners.'], blocked:['⛔ حسابك موقوف — راسلنا على design.omani1@gmail.com','⛔ Suspended — email design.omani1@gmail.com'] }[A.status];
+    const av = el('input',{type:'checkbox',id:'aAv'}); av.checked = !!A.available;
+    av.onchange = async () => { try{ await rpc('rk_set_available',{p_phone:ME.phone,p_code:ME.code,p_available:av.checked}); toast(av.checked?L('تستقبل متعلّمين 🟢','Taking learners 🟢'):L('صرت مشغول 🔴','Marked busy 🔴')); refresh(); }catch(e){ toast(e.message); av.checked=!av.checked; } };
+    const del = el('button',{class:'btn line',type:'button',style:'color:var(--stop)',text:L('🗑️ حذف حسابي نهائيًا','🗑️ Delete my account'),onclick:async e=>{
+      const t=e.currentTarget; if(!t.dataset.sure){ t.dataset.sure=1; t.textContent=L('اضغط مرة ثانية للتأكيد','Tap again to confirm'); return; }
+      try{ await rpc('rk_delete',{p_phone:ME.phone,p_code:ME.code}); saveMe(null); toast(L('انحذف حسابك ✅','Account deleted ✅')); close(); refresh(); }catch(err){ toast(err.message); } }});
+    b.replaceChildren(el('h3',{text:'🚗 '+A.name}), el('div',{class:A.status==='approved'?'ok-box':'empty',style:'text-align:start',text:st[EN()?1:0]}),
+      el('label',{class:'ck'}, av, el('span',{text:L('أستقبل متعلّمين الحين','I’m taking learners now')})),
+      el('p',{class:'meta',text:L('السعر: ','Price: ')+omr(A.price)+' '+OMR()+' · '+L('يغطي: ','Covers: ')+areaTxt(A)}),
+      el('div',{class:'acts'}, el('button',{class:'btn main',type:'button',text:L('✏️ تعديل بياناتي','✏️ Edit details'),onclick:()=>{ close(); sheet((b2,c2)=>instForm(b2,c2,A)); }}),
+        el('button',{class:'btn line',type:'button',text:L('🔑 رمز الدخول','🔑 Login code'),onclick:()=>{ copy(ME.code); }})),
+      el('button',{class:'btn line',type:'button',text:L('تسجيل خروج','Log out'),onclick:()=>{ saveMe(null); close(); toast(L('طلعت من حسابك','Logged out')); }}),
+      del, closeBtn(close));
+  });
+}
+$('joinBtn').onclick = join; $('joinTop').onclick = join;
+applyLang(); refresh();
+</script>
+
+</body>
+</html>

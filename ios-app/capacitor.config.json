@@ -1,0 +1,10 @@
+{
+  "appId": "com.salemaljabri.rukhsati",
+  "appName": "رخصتي",
+  "webDir": "www",
+  "backgroundColor": "#1f2a33",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#1f2a33"
+  }
+}

@@ -39,7 +39,7 @@ async function act(fn,a){ try{ await rpc(fn,{p_pass:PASS,...a}); load(); }catch(
 function draw(){
   const box=$('list'); box.replaceChildren();
   if(!ROWS.length) return box.append(el('p',{class:'m',text:'ما فيه شي هنا.'}));
-  if(TAB==='reports') return ROWS.forEach(r=>box.append(el('div',{class:'c'}, el('h3',{text:'🚩 '+(r.instructor||'(محذوف)')}), el('p',{class:'m',text:(r.phone?'+'+r.phone+' · ':'')+new Date(r.created_at).toLocaleString('ar-OM')}), el('p',{text:r.reason||'(بدون سبب)'}))));
+  if(TAB==='reports') return ROWS.forEach(r=>box.append(el('div',{class:'c'}, el('h3',{text:'🚩 '+(r.kind==='learner'?'متعلّم: ':'معلّم: ')+(r.instructor||'(محذوف)')}), el('p',{class:'m',text:(r.phone?'+'+r.phone+' · ':'')+new Date(r.created_at).toLocaleString('ar-OM')}), el('p',{text:r.reason||'(بدون سبب)'}))));
   if(TAB==='learners') return ROWS.forEach(r=>{
     const del=el('button',{class:'gh',text:'🗑️ حذف',onclick:e=>{ if(!e.target.dataset.s){ e.target.dataset.s=1; e.target.textContent='متأكد؟ اضغط مرة ثانية'; return; } act('rk_admin_learner_delete',{p_id:r.id}); }});
     box.append(el('div',{class:'c'}, el('div',{class:'row'}, el('h3',{text:(r.sex==='f'?'👩 ':'👨 ')+r.name}), el('span',{class:'st '+(r.active?'approved':'pending'),text:r.active?'ظاهر':'مخفي'})),

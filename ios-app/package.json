@@ -1,0 +1,19 @@
+{
+  "name": "rukhsati-ios",
+  "version": "1.0.0",
+  "private": true,
+  "description": "رخصتي — تطبيق آيفون (Capacitor)",
+  "scripts": {
+    "build": "rm -rf www && mkdir -p www && cp ../index.html ../privacy.html ../support.html ../config.js ../icon.svg www/",
+    "assets": "capacitor-assets generate --ios --iconBackgroundColor '#1f2a33' --splashBackgroundColor '#1f2a33' --splashBackgroundColorDark '#0b1116'"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/ios": "^7.0.0",
+    "@capacitor/app": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/assets": "^3.0.5"
+  }
+}

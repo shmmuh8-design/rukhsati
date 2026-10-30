@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#1f2a33">
 <meta name="description" content="رخصتي — دليل معلّمي ومعلّمات السياقة المرخّصين في سلطنة عُمان">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
 <script src="config.js"></script>
 <title>رخصتي</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -502,18 +503,30 @@ function learnAccount(){
   });
 }
 /* المعلّم يشوف المتعلّمين في ولاياته */
+const hideL = new Set(LS.get('rk-hideL', []));
+function reportLearner(l){
+  sheet((b,close)=>{
+    const t = el('input',{type:'text',placeholder:L('مثال: رقم غلط، طلب وهمي، كلام غير لائق','e.g. wrong number, fake request, inappropriate text')});
+    b.append(el('h3',{text:L('إبلاغ عن طلب ','Report request by ')+l.name}), el('p',{class:'hint',text:L('البلاغ يوصل للإدارة ونراجعه خلال 24 ساعة.','Reports reach our team and are reviewed within 24 hours.')}), t,
+      el('div',{class:'acts'}, el('button',{class:'btn main',type:'button',text:L('أرسل البلاغ','Send report'),onclick:async()=>{ try{ await rpc('rk_report_learner',{p_id:l.id,p_reason:t.value.trim()}); toast(L('وصل البلاغ، شكرًا لك 🙏','Report sent, thank you 🙏')); close(); }catch(e){ toast(e.message); } }}), closeBtn(close)));
+  });
+}
 function learnersForMe(){
   sheet(async (b,close)=>{
     b.append(el('h3',{text:L('🎓 متعلّمين يدورون معلّم في منطقتك','🎓 Learners looking for an instructor')}), el('p',{class:'hint',text:L('جاري التحميل…','Loading…')}));
     let rows; try{ rows = await rpc('rk_learners_list',{p_phone:ME.phone,p_code:ME.code}) || []; }catch(e){ toast(e.message); close(); return; }
     const ago = t => { const m = Math.round((Date.now() - new Date(t)) / 60000); return m < 60 ? L('قبل '+Math.max(1,m)+' د', Math.max(1,m)+'m ago') : m < 1440 ? L('قبل '+Math.round(m/60)+' س', Math.round(m/60)+'h ago') : L('قبل '+Math.round(m/1440)+' يوم', Math.round(m/1440)+'d ago'); };
+    rows = rows.filter(l => !hideL.has(l.id));
     const list = rows.map(l => el('div',{class:'card',style:'padding:12px 14px;display:grid;gap:6px'},
       el('div',{style:'display:flex;justify-content:space-between;gap:8px;align-items:baseline'}, el('b',{text:(l.sex==='f'?'👩 ':'👨 ')+l.name}), el('span',{class:'hint',text:ago(l.created_at)})),
       el('p',{class:'meta',style:'margin:0',text:gn(l.area)+' · '+tt(GEAR_T,l.gear)+' · '+L('يبي: ','Wants: ')+tt(WANT_T,l.want)}),
       l.notes ? el('p',{class:'hint',style:'margin:0',text:l.notes}) : null,
       el('div',{class:'acts'},
         el('a',{class:'btn wa',target:'_blank',rel:'noopener',href:'https://wa.me/'+l.phone+'?text='+encodeURIComponent(L('السلام عليكم '+l.name+'، معك المعلّم'+(ME && false ? '' : '')+' من «رخصتي» 🚗 شفت طلبك لتعليم السياقة في '+l.area+'.','Hi '+l.name+', this is an instructor from “Rukhsati” 🚗 I saw your driving-lessons request in '+gn(l.area)+'.')),text:L('💬 واتساب','💬 WhatsApp')}),
-        el('a',{class:'btn line',href:'tel:+'+l.phone,text:L('📞 اتصال','📞 Call')}))));
+        el('a',{class:'btn line',href:'tel:+'+l.phone,text:L('📞 اتصال','📞 Call')})),
+      el('div',{class:'mod'},
+        el('button',{type:'button',text:L('🚩 إبلاغ','🚩 Report'),onclick:()=>reportLearner(l)}),
+        el('button',{type:'button',text:L('🚫 إخفاء','🚫 Hide'),onclick:e=>{ hideL.add(l.id); LS.set('rk-hideL',[...hideL]); e.currentTarget.closest('.card').remove(); toast(L('انخفى الطلب','Request hidden')); }}))));
     b.replaceChildren(el('h3',{text:L('🎓 متعلّمين في منطقتك','🎓 Learners in your area')+' ('+rows.length+')'}),
       el('p',{class:'hint',text:L('تطلع لك بس طلبات الولايات اللي تغطيها ونوع الجير حقك.','Only requests in your wilayats and gearbox type are shown.')}),
       ...(list.length ? list : [el('div',{class:'empty',text:L('ما فيه طلبات في ولاياتك حاليًا. ارجع بعدين 🌷','No requests in your wilayats yet. Check back later 🌷')})]),
@@ -523,7 +536,7 @@ function learnersForMe(){
 $('learnBtn').onclick = learnJoin;
 $('joinBtn').onclick = join; $('joinTop').onclick = join;
 // مدخل الإدارة المخفي: 3 ضغطات سريعة على شعار «ت»
-(function(){ let n = 0, t; $('plate').addEventListener('click', () => { n++; clearTimeout(t); t = setTimeout(() => n = 0, 900); if(n >= 3){ n = 0; location.href = 'admin.html'; } }); })();
+(function(){ let n = 0, t; $('plate').addEventListener('click', () => { n++; clearTimeout(t); t = setTimeout(() => n = 0, 900); if(n >= 3){ n = 0; location.href = /^https?:$/.test(location.protocol) ? 'admin.html' : 'https://shmmuh8-design.github.io/rukhsati/admin.html'; } }); })();
 applyLang(); refresh();
 </script>
 

@@ -38,7 +38,7 @@ button{cursor:pointer}
 
 /* header = road */
 .road{background:var(--asphalt);color:#f4f6f5;position:relative;overflow:hidden}
-.road .wrap{padding-block:18px 26px;display:flex;flex-direction:column;gap:14px}
+.road .wrap{padding-block:calc(18px + env(safe-area-inset-top,0px)) 26px;display:flex;flex-direction:column;gap:14px}
 .road::after{content:"";position:absolute;inset:auto 0 10px 0;height:6px;background:repeating-linear-gradient(90deg,var(--sign) 0 46px,transparent 46px 78px);opacity:.9}
 .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}

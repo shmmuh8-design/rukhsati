@@ -130,7 +130,7 @@ pre.msg{white-space:pre-wrap;font:.9rem/1.8 var(--body);background:var(--bg);bor
       <button class="ghost" type="button" id="joinTop" data-t="iamT">🚗 أنا معلّم</button>
     </div>
     <div class="hero">
-      <div class="plate" aria-hidden="true" id="plate">ت</div>
+      <div class="plate" aria-hidden="true" id="plate" style="cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none">ت</div>
       <p class="big" id="brand" data-t="brand">رخصتي</p>
       <p class="tagline" data-t="tag">تعليم السياقة في عُمان</p>
       <h1 data-t="h1">معلّم سياقة مرخّص قريب منك</h1>
@@ -236,7 +236,7 @@ function fill(){
   $('area').replaceChildren(...GOV[S.gov].map(a=>el('option',{value:a,text:gn(a)})));
   $('area').value = S.area;
   const seg = (id, key, opts) => $(id).replaceChildren(...opts.map(([v,t])=>el('button',{type:'button','aria-pressed':String(S[key]===v),text:t,onclick:()=>{S[key]=v;save();fill();draw();}})));
-  seg('gear','gear',[['any',L('الكل','All')],['auto',L('أوتوماتيك','Automatic')],['manual',L('عادي (قير)','Manual')]]);
+  seg('gear','gear',[['any',L('الكل','All')],['auto',L('أوتوماتيك','Automatic')],['manual',L('عادي (جير)','Manual')]]);
   seg('sex','sex',[['any',L('الكل','All')],['m',L('معلّم','Male')],['f',L('معلّمة','Female')]]);
 }
 function save(){ LS.set('rk-s', S); }
@@ -255,7 +255,7 @@ function draw(){
   const box = $('list'); box.replaceChildren();
   if(LOADING){ box.append(el('div',{class:'empty',text:L('جاري التحميل…','Loading…')})); return; }
   if(LOAD_ERR){ box.append(el('div',{class:'empty',text:LOAD_ERR})); return; }
-  if(!Lst.length){ box.append(el('div',{class:'empty',text:L('ما فيه معلّم مسجّل في '+gn(S.area)+' بهالاختيارات حاليًا. جرّب «الكل» أو ولاية قريبة.','No instructor is listed in '+gn(S.area)+' for these choices yet. Try “All” or a nearby wilayat.')}, el('br'), el('button',{class:'btn main',type:'button',style:'margin-top:10px',text:L('🎓 سجّل طلبك وخلّ المعلّمين يتواصلون معك','🎓 Post a request so instructors can contact you'),onclick:learnJoin}))); return; }
+  if(!Lst.length){ box.append(el('div',{class:'empty',text:L('لا يوجد معلّم مسجّل في '+gn(S.area)+' بهالاختيارات حاليًا. جرّب «الكل» أو ولاية قريبة.','No instructor is listed in '+gn(S.area)+' for these choices yet. Try “All” or a nearby wilayat.')}, el('br'), el('button',{class:'btn main',type:'button',style:'margin-top:10px',text:L('🎓 سجّل طلبك وخلّ المعلّمين يتواصلون معك','🎓 Post a request so instructors can contact you'),onclick:learnJoin}))); return; }
   Lst.forEach(d => {
     const nm = d.name;
     box.append(el('article',{class:'card'+(d.sex==='f'?' f':'')}, el('div',{class:'band'}),
@@ -295,7 +295,7 @@ function request(d){
   sheet((b,close)=>{
     const opts = (id, list) => el('select',{id}, ...list.map(([v,t])=>el('option',{value:v,text:t})));
     const lvl = opts('rqLvl',[['0',L('مبتدئ تمامًا','Complete beginner')],['1',L('أعرف أسوق شوي','I can drive a little')],['2',L('أبي أتدرب للاختبار بس','Test practice only')]]);
-    const gear = opts('rqGear', d.gear.map(g=>[g, g==='auto'?L('أوتوماتيك','Automatic'):L('عادي (قير)','Manual')]));
+    const gear = opts('rqGear', d.gear.map(g=>[g, g==='auto'?L('أوتوماتيك','Automatic'):L('عادي (جير)','Manual')]));
     const time = opts('rqTime',[['a',L('الصبح','Morning')],['b',L('العصر','Afternoon')],['c',L('المسا','Evening')],['d',L('عطلة نهاية الأسبوع','Weekend')]]);
     const pack = opts('rqPack',[['1',L('حصة وحدة · ','Single lesson · ')+omr(d.price)+' '+OMR()]].concat(d.pack && d.pack_price ? [['p',L('باقة '+d.pack+' حصص · ','Package of '+d.pack+' · ')+omr(d.pack_price)+' '+OMR()]] : []));
     const name = el('input',{type:'text',id:'rqName',placeholder:L('اسمك (اختياري)','Your name (optional)')});
@@ -333,7 +333,7 @@ function instForm(b, close, A){
   const drawA = () => areas.replaceChildren(...['gov:'+gov,...GOV[gov]].map(a=>el('button',{type:'button','aria-pressed':String(pick.has(a)),text:a.startsWith('gov:')?L('كل ','All ')+gn(gov):gn(a),onclick:e=>{ pick.has(a)?pick.delete(a):pick.add(a); e.currentTarget.setAttribute('aria-pressed',String(pick.has(a))); }})));
   gsel.onchange = () => { gov = gsel.value; drawA(); }; drawA();
   const sexSel = el('select',{id:'jSex'}, el('option',{value:'m',text:L('معلّم','Male instructor')}), el('option',{value:'f',text:L('معلّمة','Female instructor')}));
-  const gearSel = el('select',{id:'jGear'}, el('option',{value:'auto',text:L('أوتوماتيك','Automatic')}), el('option',{value:'manual',text:L('عادي (قير)','Manual')}), el('option',{value:'both',text:L('الاثنين','Both')}));
+  const gearSel = el('select',{id:'jGear'}, el('option',{value:'auto',text:L('أوتوماتيك','Automatic')}), el('option',{value:'manual',text:L('عادي (جير)','Manual')}), el('option',{value:'both',text:L('الاثنين','Both')}));
   const inp = (id, ph, extra) => el('input',Object.assign({type:'text',id,placeholder:ph},extra||{}));
   const nm=inp('jName',L('الاسم الكامل','Full name')), lic=inp('jLic',L('اختياري','Optional'),{dir:'ltr'}), car=inp('jCar',L('مثال: تويوتا يارس 2023','e.g. Toyota Yaris 2023'));
   const langs=inp('jLangs',L('مثال: عربي، إنجليزي','e.g. Arabic, English'));
@@ -417,7 +417,7 @@ function account(){
 /* ---------------- المتعلّمين ---------------- */
 let LME = null; try{ LME = JSON.parse(localStorage.getItem('rk-learner') || 'null'); }catch(e){}
 const saveL = v => { LME = v; try{ v ? localStorage.setItem('rk-learner', JSON.stringify(v)) : localStorage.removeItem('rk-learner'); }catch(e){} };
-const GEAR_T = { auto:['أوتوماتيك','Automatic'], manual:['عادي (قير)','Manual'], any:['ما يفرق','Either'] };
+const GEAR_T = { auto:['أوتوماتيك','Automatic'], manual:['عادي (جير)','Manual'], any:['ما يفرق','Either'] };
 const WANT_T = { any:['معلّم أو معلّمة','Male or female'], m:['معلّم','Male instructor'], f:['معلّمة','Female instructor'] };
 const tt = (m, k) => m[k] ? m[k][EN()?1:0] : k;
 function learnForm(b, close, A){
@@ -522,6 +522,8 @@ function learnersForMe(){
 }
 $('learnBtn').onclick = learnJoin;
 $('joinBtn').onclick = join; $('joinTop').onclick = join;
+// مدخل الإدارة المخفي: 3 ضغطات سريعة على شعار «ت»
+(function(){ let n = 0, t; $('plate').addEventListener('click', () => { n++; clearTimeout(t); t = setTimeout(() => n = 0, 900); if(n >= 3){ n = 0; location.href = 'admin.html'; } }); })();
 applyLang(); refresh();
 </script>
 

@@ -128,7 +128,7 @@ pre.msg{white-space:pre-wrap;font:.9rem/1.8 var(--body);background:var(--bg);bor
   <div class="wrap">
     <div class="top">
       <div class="langsw" role="group" aria-label="Language / اللغة"><button type="button" id="lnEn" lang="en">English</button><button type="button" id="lnAr" lang="ar">العربية</button></div>
-      <button class="ghost" type="button" id="joinTop" data-t="iamT">🚗 أنا معلّم</button>
+      <button class="ghost" type="button" id="joinTop" data-t="iamT">👤 دخول / تسجيل</button>
     </div>
     <div class="hero">
       <div class="plate" aria-hidden="true" id="plate" style="cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none">ت</div>
@@ -201,7 +201,7 @@ const L = (a, e) => EN() ? e : a;
 const pick2 = v => Array.isArray(v) ? v[EN() ? 1 : 0] : v;
 const gn = x => EN() ? (GN[x] || x) : x;
 const T = {
-  brand:['رخصتي','Rukhsati'], tag:['تعليم السياقة في عُمان','Driving lessons in Oman'], iamT:['🚗 أنا معلّم','🚗 I teach'],
+  brand:['رخصتي','Rukhsati'], tag:['تعليم السياقة في عُمان','Driving lessons in Oman'], iamT:['👤 دخول / تسجيل','👤 Sign in / Join'],
   h1:['معلّم سياقة مرخّص قريب منك','A licensed driving instructor near you'],
   lead:['اختار ولايتك ونوع الجير، وقارن أسعار الحصص، وكلّم المعلّم أو المعلّمة مباشرة.','Pick your wilayat and gearbox, compare lesson prices, and contact the instructor directly.'],
   demo:['نموذج تجريبي · المعلّمين أمثلة','Prototype · sample instructors'],
@@ -534,7 +534,21 @@ function learnersForMe(){
   });
 }
 $('learnBtn').onclick = learnJoin;
-$('joinBtn').onclick = join; $('joinTop').onclick = join;
+function hub(){
+  if(ME) return account();
+  if(LME) return learnAccount();
+  sheet((b,close)=>{
+    const box = (icon, title, sub, reg, log) => el('div',{class:'card',style:'padding:14px;display:grid;gap:10px'},
+      el('b',{style:'font-size:1.1rem',text:icon+' '+title}), el('p',{class:'hint',style:'margin:0',text:sub}),
+      el('div',{class:'acts'}, el('button',{class:'btn main',type:'button',text:L('📝 تسجيل جديد','📝 Join'),onclick:()=>{ close(); reg(); }}),
+        el('button',{class:'btn line',type:'button',text:L('🔑 دخول برمزي','🔑 Log in'),onclick:()=>{ close(); log(); }})));
+    b.append(el('h3',{text:L('👤 دخول / تسجيل','👤 Sign in / Join')}),
+      box('🚗', L('معلّم أو معلّمة سياقة','Driving instructor'), L('اعرض خدمتك وشوف طلبات المتعلّمين في منطقتك.','List your lessons and see learner requests in your area.'), join, login),
+      box('🎓', L('متعلّم أو متعلّمة','Learner'), L('سجّل طلبك وخلّ المعلّمين يتواصلون معك. (18 سنة فأكثر)','Post a request and let instructors contact you (18+).'), learnJoin, learnLogin),
+      closeBtn(close));
+  });
+}
+$('joinBtn').onclick = join; $('joinTop').onclick = hub;
 // مدخل الإدارة المخفي: 3 ضغطات سريعة على شعار «ت»
 (function(){ let n = 0, t; $('plate').addEventListener('click', () => { n++; clearTimeout(t); t = setTimeout(() => n = 0, 900); if(n >= 3){ n = 0; location.href = /^https?:$/.test(location.protocol) ? 'admin.html' : 'https://shmmuh8-design.github.io/rukhsati/admin.html'; } }); })();
 applyLang(); refresh();

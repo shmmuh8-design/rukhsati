@@ -28,7 +28,7 @@
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font:600 15.5px/1.75 var(--body);direction:rtl}
 html[dir="ltr"] body{direction:ltr}
-button,input,select{font:inherit;color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:3px solid var(--sign);outline-offset:2px}
 .num{font-variant-numeric:tabular-nums}
@@ -62,7 +62,7 @@ main .wrap{padding-block:18px 60px;display:flex;flex-direction:column;gap:18px}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:14px}
 .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
 label.l{font-weight:700;font-size:.88rem;display:block;margin-bottom:6px}
-select,input[type=text],input[type=tel],input[type=number]{width:100%;min-width:0;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);padding:10px 12px}
+select,textarea,input[type=text],input[type=tel],input[type=number]{width:100%;min-width:0;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);padding:10px 12px}
 .seg{display:flex;flex-wrap:wrap;gap:8px}
 .seg button{border:1.5px solid var(--line);background:var(--chip);border-radius:999px;padding:7px 14px;font-weight:600;font-size:.88rem}
 .seg button[aria-pressed="true"]{background:var(--sign);border-color:var(--sign);color:var(--sign-ink)}
@@ -157,8 +157,14 @@ pre.msg{white-space:pre-wrap;font:.9rem/1.8 var(--body);background:var(--bg);bor
 
     <section class="join">
       <h3 data-t="joinH">عندك سيارة تعليم وترخيص؟</h3>
-      <p data-t="joinP">سجّل كمعلّم أو معلّمة، وحدد ولاياتك وسعر الحصة، ويتصل فيك المتعلّمين مباشرة. حسابك يظهر بعد ما تتأكد الإدارة من ترخيصك.</p>
+      <p data-t="joinP">سجّل كمعلّم أو معلّمة، وحدد ولاياتك وسعر الحصة، ويتصل فيك المتعلّمين مباشرة، وتشوف طلبات المتعلّمين في منطقتك.</p>
       <button class="btn sign" type="button" id="joinBtn" style="justify-self:start" data-t="joinB">سجّل كمعلّم سياقة</button>
+    </section>
+
+    <section class="join learn">
+      <h3 data-t="lrnH">تبي تتعلّم السياقة؟</h3>
+      <p data-t="lrnP">سجّل طلبك بولايتك ونوع الجير، ويشوفه المعلّمين والمعلّمات في منطقتك ويتواصلون معك. لازم يكون عمرك 18 سنة أو أكثر.</p>
+      <button class="btn sign" type="button" id="learnBtn" style="justify-self:start" data-t="lrnB">🎓 سجّل كمتعلّم</button>
     </section>
     <footer class="foot"><b data-t="cpy1">© 2026 رخصتي — جميع الحقوق محفوظة</b><br><span data-t="cpy2">سالم الجابري · مسقط، سلطنة عُمان</span><br><span dir="ltr">design.omani1@gmail.com</span></footer>
   </div>
@@ -200,7 +206,10 @@ const T = {
   demo:['نموذج تجريبي · المعلّمين أمثلة','Prototype · sample instructors'],
   govL:['المحافظة','Governorate'], areaL:['الولاية','Wilayat'], gearL:['نوع الجير','Gearbox'], sexL:['المعلّم','Instructor'],
   joinH:['عندك سيارة تعليم وترخيص؟','Licensed instructor with a training car?'],
-  joinP:['سجّل كمعلّم أو معلّمة، وحدد ولاياتك وسعر الحصة، ويتصل فيك المتعلّمين مباشرة. حسابك يظهر بعد ما تتأكد الإدارة من ترخيصك.','Join as an instructor, set your wilayats and lesson price, and learners contact you directly. Your profile appears once we verify your licence.'],
+  joinP:['سجّل كمعلّم أو معلّمة، وحدد ولاياتك وسعر الحصة، ويتصل فيك المتعلّمين مباشرة، وتشوف طلبات المتعلّمين في منطقتك.','Join as an instructor, set your wilayats and lesson price, get contacted by learners and see learner requests in your area.'],
+  lrnH:['تبي تتعلّم السياقة؟','Want to learn to drive?'],
+  lrnP:['سجّل طلبك بولايتك ونوع الجير، ويشوفه المعلّمين والمعلّمات في منطقتك ويتواصلون معك. لازم يكون عمرك 18 سنة أو أكثر.','Post your request with your wilayat and gearbox, and instructors in your area will contact you. You must be 18 or older.'],
+  lrnB:['🎓 سجّل كمتعلّم','🎓 Register as a learner'],
   joinB:['سجّل كمعلّم سياقة','Join as an instructor'],
   cpy1:['© 2026 رخصتي — جميع الحقوق محفوظة','© 2026 Rukhsati — All rights reserved'], cpy2:['سالم الجابري · مسقط، سلطنة عُمان','Salem Aljabri · Muscat, Sultanate of Oman']
 };
@@ -246,7 +255,7 @@ function draw(){
   const box = $('list'); box.replaceChildren();
   if(LOADING){ box.append(el('div',{class:'empty',text:L('جاري التحميل…','Loading…')})); return; }
   if(LOAD_ERR){ box.append(el('div',{class:'empty',text:LOAD_ERR})); return; }
-  if(!Lst.length){ box.append(el('div',{class:'empty',text:L('ما فيه معلّم مسجّل في '+gn(S.area)+' بهالاختيارات حاليًا. جرّب «الكل» أو ولاية قريبة.','No instructor is listed in '+gn(S.area)+' for these choices yet. Try “All” or a nearby wilayat.')})); return; }
+  if(!Lst.length){ box.append(el('div',{class:'empty',text:L('ما فيه معلّم مسجّل في '+gn(S.area)+' بهالاختيارات حاليًا. جرّب «الكل» أو ولاية قريبة.','No instructor is listed in '+gn(S.area)+' for these choices yet. Try “All” or a nearby wilayat.')}, el('br'), el('button',{class:'btn main',type:'button',style:'margin-top:10px',text:L('🎓 سجّل طلبك وخلّ المعلّمين يتواصلون معك','🎓 Post a request so instructors can contact you'),onclick:learnJoin}))); return; }
   Lst.forEach(d => {
     const nm = d.name;
     box.append(el('article',{class:'card'+(d.sex==='f'?' f':'')}, el('div',{class:'band'}),
@@ -256,7 +265,6 @@ function draw(){
           el('div',{}, el('h3',{text:nm}), el('div',{class:'sub',text:(d.sex==='f'?L('معلّمة','Female'):L('معلّم','Male'))+(d.years != null ? ' · '+L('خبرة '+d.years+' سنة',d.years+' yrs experience') : '')})),
           el('div',{class:'price'}, el('b',{class:'num',text:omr(d.price)}), el('span',{text:L('ر.ع للحصة','OMR / lesson')}))),
         el('div',{class:'tags'},
-          el('span',{class:'tag lic',text:L('✓ ترخيص معتمد','✓ Licensed')}),
           el('span',{class:'tag '+(d.available?'ok':'busy'),text:d.available?L('يستقبل متعلّمين','Taking learners'):L('مشغول الحين','Busy now')}),
           el('span',{class:'tag',text:'⚙️ '+gearTxt(d.gear)}),
           d.car ? el('span',{class:'tag',text:'🚗 '+d.car}) : null),
@@ -327,17 +335,17 @@ function instForm(b, close, A){
   const sexSel = el('select',{id:'jSex'}, el('option',{value:'m',text:L('معلّم','Male instructor')}), el('option',{value:'f',text:L('معلّمة','Female instructor')}));
   const gearSel = el('select',{id:'jGear'}, el('option',{value:'auto',text:L('أوتوماتيك','Automatic')}), el('option',{value:'manual',text:L('عادي (قير)','Manual')}), el('option',{value:'both',text:L('الاثنين','Both')}));
   const inp = (id, ph, extra) => el('input',Object.assign({type:'text',id,placeholder:ph},extra||{}));
-  const nm=inp('jName',L('الاسم الكامل','Full name')), lic=inp('jLic',L('رقم ترخيص معلّم السياقة','Instructor licence number'),{dir:'ltr'}), car=inp('jCar',L('مثال: تويوتا يارس 2023','e.g. Toyota Yaris 2023'));
+  const nm=inp('jName',L('الاسم الكامل','Full name')), lic=inp('jLic',L('اختياري','Optional'),{dir:'ltr'}), car=inp('jCar',L('مثال: تويوتا يارس 2023','e.g. Toyota Yaris 2023'));
   const langs=inp('jLangs',L('مثال: عربي، إنجليزي','e.g. Arabic, English'));
   const ph=el('input',{type:'tel',id:'jPhone',dir:'ltr',placeholder:'9XXXXXXX'});
   const num = (id, ph2, step) => el('input',{type:'number',id,min:'0',step:step||'0.5',placeholder:ph2,dir:'ltr'});
   const pr=num('jPrice',L('مثال: 7','e.g. 7')), yrs=num('jYears',L('مثال: 5','e.g. 5'),'1'), pk=num('jPack',L('مثال: 10','e.g. 10'),'1'), pkp=num('jPackP',L('مثال: 65','e.g. 65'));
-  if(A){ nm.value=A.name; sexSel.value=A.sex; sexSel.disabled=true; ph.value=A.phone.replace(/^968/,''); ph.disabled=true; lic.value=A.lic; lic.disabled=true; car.value=A.car||''; gearSel.value=A.gear.length>1?'both':A.gear[0]; pr.value=A.price; yrs.value=A.years??''; pk.value=A.pack??''; pkp.value=A.pack_price??''; langs.value=A.langs||''; }
+  if(A){ nm.value=A.name; sexSel.value=A.sex; sexSel.disabled=true; ph.value=A.phone.replace(/^968/,''); ph.disabled=true; lic.value=A.lic||''; lic.disabled=true; car.value=A.car||''; gearSel.value=A.gear.length>1?'both':A.gear[0]; pr.value=A.price; yrs.value=A.years??''; pk.value=A.pack??''; pkp.value=A.pack_price??''; langs.value=A.langs||''; }
   const agree = el('input',{type:'checkbox',id:'jOk'}); if(A) agree.checked = true;
   const fld = (id, t, c) => el('div',{}, el('label',{class:'l',for:id,text:t}), c);
   const form = el('div',{style:'display:grid;gap:12px'},
     el('div',{class:'row2'}, fld('jName',L('الاسم','Name'),nm), fld('jSex',L('أنا','I am'),sexSel)),
-    el('div',{class:'row2'}, fld('jPhone',L('رقم الهاتف','Phone'),ph), fld('jLic',L('رقم الترخيص','Licence no.'),lic)),
+    el('div',{class:'row2'}, fld('jPhone',L('رقم الهاتف','Phone'),ph), fld('jLic',L('رقم الترخيص (اختياري)','Licence no. (optional)'),lic)),
     el('div',{class:'row2'}, fld('jCar',L('سيارة التعليم','Training car'),car), fld('jGear',L('الجير','Gearbox'),gearSel)),
     fld('jGov',L('الولايات اللي تغطيها','Wilayats you cover'),gsel), areas,
     el('div',{class:'row2'}, fld('jPrice',L('سعر الحصة (ر.ع)','Lesson price (OMR)'),pr), fld('jYears',L('سنوات الخبرة','Years of experience'),yrs)),
@@ -348,7 +356,6 @@ function instForm(b, close, A){
     const phone = A ? A.phone : normPhone(ph.value);
     if(!nm.value.trim()) return toast(L('اكتب اسمك','Enter your name'));
     if(!/^968[79]\d{7}$/.test(phone)) return toast(L('رقم الهاتف لازم 8 أرقام','Phone must be 8 digits'));
-    if(lic.value.trim().length<3) return toast(L('اكتب رقم ترخيص معلّم السياقة','Enter your instructor licence number'));
     if(!pick.size) return toast(L('اختار ولاية وحدة على الأقل','Pick at least one wilayat'));
     if(!(+pr.value>0)) return toast(L('اكتب سعر الحصة','Enter the lesson price'));
     if((pk.value && !(+pkp.value>0)) || (pkp.value && !(+pk.value>1))) return toast(L('اكتب عدد حصص الباقة وسعرها، أو خلّهم فاضيين','Enter both package lessons and price, or leave both empty'));
@@ -362,7 +369,7 @@ function instForm(b, close, A){
         const r = await rpc('rk_register', { ...common, p_sex:sexSel.value, p_phone:phone, p_lic:lic.value.trim() });
         saveMe({ phone, code:r.code }); form.remove(); send.remove(); $('jLogin')?.remove();
         b.insertBefore(el('div',{style:'display:grid;gap:10px'},
-          el('div',{class:'ok-box',text:L('✅ وصل تسجيلك. حسابك بيظهر للمتعلّمين بعد ما تتأكد الإدارة من ترخيصك.','✅ Received. Your profile appears to learners after we verify your licence.')}),
+          el('div',{class:'ok-box',text:L('✅ تم التسجيل! حسابك ظاهر للمتعلّمين الحين.','✅ Done! Your profile is now visible to learners.')}),
           el('p',{style:'margin:0;font-weight:800',text:L('رمز الدخول حقك:','Your login code:')}),
           el('pre',{class:'msg num',dir:'ltr',style:'font-size:1.6rem;text-align:center;letter-spacing:.15em',text:r.code}),
           el('p',{class:'hint',text:L('⚠️ صوّر الشاشة أو احفظ الرمز. تحتاجه لو غيّرت جوالك.','⚠️ Save this code. You need it if you change phones.')}),
@@ -397,15 +404,123 @@ function account(){
     const del = el('button',{class:'btn line',type:'button',style:'color:var(--stop)',text:L('🗑️ حذف حسابي نهائيًا','🗑️ Delete my account'),onclick:async e=>{
       const t=e.currentTarget; if(!t.dataset.sure){ t.dataset.sure=1; t.textContent=L('اضغط مرة ثانية للتأكيد','Tap again to confirm'); return; }
       try{ await rpc('rk_delete',{p_phone:ME.phone,p_code:ME.code}); saveMe(null); toast(L('انحذف حسابك ✅','Account deleted ✅')); close(); refresh(); }catch(err){ toast(err.message); } }});
-    b.replaceChildren(el('h3',{text:'🚗 '+A.name}), el('div',{class:A.status==='approved'?'ok-box':'empty',style:'text-align:start',text:st[EN()?1:0]}),
+    b.replaceChildren(...[el('h3',{text:'🚗 '+A.name}), el('div',{class:A.status==='approved'?'ok-box':'empty',style:'text-align:start',text:st[EN()?1:0]}),
       el('label',{class:'ck'}, av, el('span',{text:L('أستقبل متعلّمين الحين','I’m taking learners now')})),
       el('p',{class:'meta',text:L('السعر: ','Price: ')+omr(A.price)+' '+OMR()+' · '+L('يغطي: ','Covers: ')+areaTxt(A)}),
+      A.status!=='blocked' ? el('button',{class:'btn sign',type:'button',text:L('🎓 متعلّمين يدورون معلّم في منطقتك','🎓 Learners looking for an instructor'),onclick:()=>{ close(); learnersForMe(); }}) : null,
       el('div',{class:'acts'}, el('button',{class:'btn main',type:'button',text:L('✏️ تعديل بياناتي','✏️ Edit details'),onclick:()=>{ close(); sheet((b2,c2)=>instForm(b2,c2,A)); }}),
         el('button',{class:'btn line',type:'button',text:L('🔑 رمز الدخول','🔑 Login code'),onclick:()=>{ copy(ME.code); }})),
       el('button',{class:'btn line',type:'button',text:L('تسجيل خروج','Log out'),onclick:()=>{ saveMe(null); close(); toast(L('طلعت من حسابك','Logged out')); }}),
-      del, closeBtn(close));
+      del, closeBtn(close)].filter(Boolean));
   });
 }
+/* ---------------- المتعلّمين ---------------- */
+let LME = null; try{ LME = JSON.parse(localStorage.getItem('rk-learner') || 'null'); }catch(e){}
+const saveL = v => { LME = v; try{ v ? localStorage.setItem('rk-learner', JSON.stringify(v)) : localStorage.removeItem('rk-learner'); }catch(e){} };
+const GEAR_T = { auto:['أوتوماتيك','Automatic'], manual:['عادي (قير)','Manual'], any:['ما يفرق','Either'] };
+const WANT_T = { any:['معلّم أو معلّمة','Male or female'], m:['معلّم','Male instructor'], f:['معلّمة','Female instructor'] };
+const tt = (m, k) => m[k] ? m[k][EN()?1:0] : k;
+function learnForm(b, close, A){
+  let gov = A ? A.gov : S.gov;
+  const inp = (id, ph, extra) => el('input',Object.assign({type:'text',id,placeholder:ph},extra||{}));
+  const nm = inp('lName',L('الاسم','Name')), ph = el('input',{type:'tel',id:'lPh',dir:'ltr',placeholder:'9XXXXXXX'});
+  const sex = el('select',{id:'lSex'}, el('option',{value:'m',text:L('متعلّم','Male learner')}), el('option',{value:'f',text:L('متعلّمة','Female learner')}));
+  const gsel = el('select',{id:'lGov'}, ...Object.keys(GOV).map(g=>el('option',{value:g,text:gn(g)})));
+  const asel = el('select',{id:'lArea'});
+  const fillA = sel => { asel.replaceChildren(...GOV[gov].map(a=>el('option',{value:a,text:gn(a)}))); asel.value = sel && GOV[gov].includes(sel) ? sel : GOV[gov][0]; };
+  gsel.value = gov; gsel.onchange = () => { gov = gsel.value; fillA(); }; fillA(A ? A.area : S.area);
+  const gear = el('select',{id:'lGear'}, ...['auto','manual','any'].map(k=>el('option',{value:k,text:tt(GEAR_T,k)})));
+  const want = el('select',{id:'lWant'}, ...['any','f','m'].map(k=>el('option',{value:k,text:tt(WANT_T,k)})));
+  const notes = el('textarea',{id:'lNotes',rows:'2',maxlength:'200',placeholder:L('اختياري: مثلًا مبتدئ، أبي الحصص المسا، عندي موعد اختبار…','Optional: e.g. beginner, evenings, test date…')});
+  const age = el('input',{type:'checkbox',id:'lAge'}), ok = el('input',{type:'checkbox',id:'lOk'});
+  if(A){ nm.value=A.name; sex.value=A.sex; sex.disabled=true; ph.value=A.phone.replace(/^968/,''); ph.disabled=true; gear.value=A.gear; want.value=A.want; notes.value=A.notes||''; age.checked=ok.checked=true; }
+  else { gear.value = S.gear==='any' ? 'any' : S.gear; want.value = S.sex; }
+  const fld = (id, t, c) => el('div',{}, el('label',{class:'l',for:id,text:t}), c);
+  const form = el('div',{style:'display:grid;gap:12px'},
+    el('div',{class:'row2'}, fld('lName',L('الاسم','Name'),nm), fld('lSex',L('أنا','I am'),sex)),
+    fld('lPh',L('رقم الهاتف (واتساب)','Phone (WhatsApp)'),ph),
+    el('div',{class:'row2'}, fld('lGov',L('المحافظة','Governorate'),gsel), fld('lArea',L('الولاية','Wilayat'),asel)),
+    el('div',{class:'row2'}, fld('lGear',L('الجير','Gearbox'),gear), fld('lWant',L('أبي','I prefer'),want)),
+    fld('lNotes',L('ملاحظة','Note'),notes),
+    A ? null : el('label',{class:'ck'}, age, el('span',{text:L('عمري 18 سنة أو أكثر (حسب اشتراطات شرطة عُمان السلطانية).','I am 18 or older (Royal Oman Police requirement).')})),
+    A ? null : el('label',{class:'ck'}, ok, el('span',{text:L('أوافق إن اسمي ورقمي يظهرون للمعلّمين المسجّلين في ولايتي عشان يتواصلون معي.','I agree my name and number are shown to registered instructors in my wilayat so they can contact me.')})));
+  const send = el('button',{class:'btn main',type:'button',text:A?L('💾 حفظ التعديلات','💾 Save changes'):L('📤 سجّل طلبي','📤 Submit my request'),onclick:async()=>{
+    const phone = A ? A.phone : normPhone(ph.value);
+    if(nm.value.trim().length<2) return toast(L('اكتب اسمك','Enter your name'));
+    if(!/^968[79]\d{7}$/.test(phone)) return toast(L('رقم الهاتف لازم 8 أرقام','Phone must be 8 digits'));
+    if(!age.checked) return toast(L('لازم يكون عمرك 18 سنة أو أكثر','You must be 18 or older'));
+    if(!ok.checked) return toast(L('لازم توافق عشان المعلّمين يقدرون يتواصلون معك','Please agree so instructors can contact you'));
+    const common = { p_name:nm.value.trim(), p_gov:gov, p_area:asel.value, p_gear:gear.value, p_want:want.value, p_notes:notes.value.trim() };
+    send.disabled = true;
+    try{
+      if(A){ await rpc('rk_learner_update',{ ...common, p_phone:LME.phone, p_code:LME.code, p_active:A.active }); toast(L('انحفظ ✅','Saved ✅')); close(); learnAccount(); }
+      else {
+        const r = await rpc('rk_learner_register',{ ...common, p_sex:sex.value, p_phone:phone });
+        saveL({ phone, code:r.code }); form.remove(); send.remove(); $('lLogin')?.remove();
+        b.insertBefore(el('div',{style:'display:grid;gap:10px'},
+          el('div',{class:'ok-box',text:L('✅ وصل طلبك! المعلّمين والمعلّمات في '+gn(asel.value)+' يشوفونه الحين ويتواصلون معك. وتقدر بعد تتصل فيهم مباشرة من القائمة.','✅ Done! Instructors in '+gn(asel.value)+' can now see your request and contact you. You can also contact them directly from the list.')}),
+          el('p',{style:'margin:0;font-weight:800',text:L('رمز الدخول حقك:','Your login code:')}),
+          el('pre',{class:'msg num',dir:'ltr',style:'font-size:1.6rem;text-align:center;letter-spacing:.15em',text:r.code}),
+          el('p',{class:'hint',text:L('⚠️ احفظ الرمز. تحتاجه عشان تعدّل طلبك أو تحذفه من جوال ثاني.','⚠️ Save this code to edit or delete your request from another phone.')}),
+          el('button',{class:'btn main',type:'button',text:L('📋 نسخ الرمز','📋 Copy code'),onclick:()=>copy(r.code)})), b.lastChild);
+      }
+    }catch(e){ toast(e.message); }
+    send.disabled = false;
+  }});
+  b.append(...[el('h3',{text:A?L('✏️ تعديل طلبي','✏️ Edit my request'):L('🎓 سجّل كمتعلّم','🎓 Register as a learner')}),
+    A ? null : el('p',{class:'hint',text:L('مجاني. سجّل طلبك والمعلّمين في منطقتك يتواصلون معك.','Free. Post your request and instructors in your area will contact you.')}),
+    A ? null : el('button',{class:'btn line',id:'lLogin',type:'button',text:L('مسجّل من قبل؟ ادخل برمزك','Already registered? Log in'),onclick:()=>{ close(); learnLogin(); }}),
+    form, send, closeBtn(close)].filter(Boolean));
+}
+function learnJoin(){ if(LME) return learnAccount(); sheet((b,close)=>learnForm(b, close, null)); }
+function learnLogin(){
+  sheet((b,close)=>{
+    const ph=el('input',{type:'tel',dir:'ltr',placeholder:'9XXXXXXX'}), cd=el('input',{type:'text',dir:'ltr',placeholder:L('رمز الدخول','Login code'),autocapitalize:'characters'});
+    b.append(el('h3',{text:L('🔑 دخول المتعلّم','🔑 Learner login')}), ph, cd,
+      el('button',{class:'btn main',type:'button',text:L('دخول','Log in'),onclick:async()=>{ const phone=normPhone(ph.value), code=cd.value.trim().toUpperCase();
+        try{ await rpc('rk_learner_me',{p_phone:phone,p_code:code}); saveL({phone,code}); close(); learnAccount(); }catch(e){ toast(e.message); } }}),
+      closeBtn(close));
+  });
+}
+function learnAccount(){
+  sheet(async (b,close)=>{
+    b.append(el('h3',{text:L('🎓 طلبي','🎓 My request')}), el('p',{class:'hint',text:L('جاري التحميل…','Loading…')}));
+    let A; try{ A = await rpc('rk_learner_me',{p_phone:LME.phone,p_code:LME.code}); }catch(e){ toast(e.message); if(/غلط/.test(e.message)){ saveL(null); close(); learnLogin(); } return; }
+    const av = el('input',{type:'checkbox'}); av.checked = !!A.active;
+    av.onchange = async () => { try{ await rpc('rk_learner_update',{p_phone:LME.phone,p_code:LME.code,p_name:A.name,p_gov:A.gov,p_area:A.area,p_gear:A.gear,p_want:A.want,p_notes:A.notes||'',p_active:av.checked}); A.active=av.checked; toast(av.checked?L('طلبك ظاهر للمعلّمين 🟢','Visible to instructors 🟢'):L('خفينا طلبك 🔴','Request hidden 🔴')); }catch(e){ toast(e.message); av.checked=!av.checked; } };
+    const del = el('button',{class:'btn line',type:'button',style:'color:var(--stop)',text:L('🗑️ حذف طلبي نهائيًا','🗑️ Delete my request'),onclick:async e=>{
+      const t=e.currentTarget; if(!t.dataset.sure){ t.dataset.sure=1; t.textContent=L('اضغط مرة ثانية للتأكيد','Tap again to confirm'); return; }
+      try{ await rpc('rk_learner_delete',{p_phone:LME.phone,p_code:LME.code}); saveL(null); toast(L('انحذف طلبك ✅','Deleted ✅')); close(); }catch(err){ toast(err.message); } }});
+    b.replaceChildren(...[el('h3',{text:'🎓 '+A.name}),
+      el('p',{class:'meta',text:gn(A.area)+' — '+gn(A.gov)+' · '+tt(GEAR_T,A.gear)+' · '+tt(WANT_T,A.want)}),
+      A.notes ? el('p',{class:'hint',text:A.notes}) : null,
+      el('label',{class:'ck'}, av, el('span',{text:L('طلبي ظاهر للمعلّمين (طفّه لما تلقى معلّم)','Show my request to instructors (turn off once you find one)')})),
+      el('div',{class:'acts'}, el('button',{class:'btn main',type:'button',text:L('✏️ تعديل طلبي','✏️ Edit'),onclick:()=>{ close(); sheet((b2,c2)=>learnForm(b2,c2,A)); }}),
+        el('button',{class:'btn line',type:'button',text:L('🔑 رمز الدخول','🔑 Login code'),onclick:()=>copy(LME.code)})),
+      el('button',{class:'btn line',type:'button',text:L('تسجيل خروج','Log out'),onclick:()=>{ saveL(null); close(); toast(L('طلعت من حسابك','Logged out')); }}),
+      del, closeBtn(close)].filter(Boolean));
+  });
+}
+/* المعلّم يشوف المتعلّمين في ولاياته */
+function learnersForMe(){
+  sheet(async (b,close)=>{
+    b.append(el('h3',{text:L('🎓 متعلّمين يدورون معلّم في منطقتك','🎓 Learners looking for an instructor')}), el('p',{class:'hint',text:L('جاري التحميل…','Loading…')}));
+    let rows; try{ rows = await rpc('rk_learners_list',{p_phone:ME.phone,p_code:ME.code}) || []; }catch(e){ toast(e.message); close(); return; }
+    const ago = t => { const m = Math.round((Date.now() - new Date(t)) / 60000); return m < 60 ? L('قبل '+Math.max(1,m)+' د', Math.max(1,m)+'m ago') : m < 1440 ? L('قبل '+Math.round(m/60)+' س', Math.round(m/60)+'h ago') : L('قبل '+Math.round(m/1440)+' يوم', Math.round(m/1440)+'d ago'); };
+    const list = rows.map(l => el('div',{class:'card',style:'padding:12px 14px;display:grid;gap:6px'},
+      el('div',{style:'display:flex;justify-content:space-between;gap:8px;align-items:baseline'}, el('b',{text:(l.sex==='f'?'👩 ':'👨 ')+l.name}), el('span',{class:'hint',text:ago(l.created_at)})),
+      el('p',{class:'meta',style:'margin:0',text:gn(l.area)+' · '+tt(GEAR_T,l.gear)+' · '+L('يبي: ','Wants: ')+tt(WANT_T,l.want)}),
+      l.notes ? el('p',{class:'hint',style:'margin:0',text:l.notes}) : null,
+      el('div',{class:'acts'},
+        el('a',{class:'btn wa',target:'_blank',rel:'noopener',href:'https://wa.me/'+l.phone+'?text='+encodeURIComponent(L('السلام عليكم '+l.name+'، معك المعلّم'+(ME && false ? '' : '')+' من «رخصتي» 🚗 شفت طلبك لتعليم السياقة في '+l.area+'.','Hi '+l.name+', this is an instructor from “Rukhsati” 🚗 I saw your driving-lessons request in '+gn(l.area)+'.')),text:L('💬 واتساب','💬 WhatsApp')}),
+        el('a',{class:'btn line',href:'tel:+'+l.phone,text:L('📞 اتصال','📞 Call')}))));
+    b.replaceChildren(el('h3',{text:L('🎓 متعلّمين في منطقتك','🎓 Learners in your area')+' ('+rows.length+')'}),
+      el('p',{class:'hint',text:L('تطلع لك بس طلبات الولايات اللي تغطيها ونوع الجير حقك.','Only requests in your wilayats and gearbox type are shown.')}),
+      ...(list.length ? list : [el('div',{class:'empty',text:L('ما فيه طلبات في ولاياتك حاليًا. ارجع بعدين 🌷','No requests in your wilayats yet. Check back later 🌷')})]),
+      closeBtn(close));
+  });
+}
+$('learnBtn').onclick = learnJoin;
 $('joinBtn').onclick = join; $('joinTop').onclick = join;
 applyLang(); refresh();
 </script>

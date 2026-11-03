@@ -6,5 +6,9 @@
   "ios": {
     "contentInset": "never",
     "backgroundColor": "#1f2a33"
+  },
+  "android": {
+    "backgroundColor": "#1f2a33",
+    "adjustMarginsForEdgeToEdge": "force"
   }
 }

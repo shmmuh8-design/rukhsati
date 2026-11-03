@@ -57,3 +57,58 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: false
+
+  # ---------------- أندرويد: ملف AAB لجوجل بلاي ----------------
+  rukhsati-android:
+    name: رخصتي — أندرويد
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    working_directory: ios-app
+    environment:
+      android_signing:
+        - rukhsati_keystore              # اسم مفتاح التوقيع اللي تسويه في Codemagic
+      node: 20
+      java: 21
+    scripts:
+      - name: تثبيت الحزم وتجهيز الملفات
+        script: |
+          npm install
+          npm run build
+      - name: إنشاء مشروع أندرويد
+        script: |
+          [ -d android ] || npx cap add android
+          npm run assets:android
+          npx cap sync android
+      - name: التوقيع ورقم الإصدار
+        script: |
+          python3 - <<'PY'
+          import os, re
+          p = 'android/app/build.gradle'
+          s = open(p).read()
+          code = int(os.environ.get('BUILD_NUMBER', '1')) + 1
+          s = re.sub(r'versionCode \d+', 'versionCode %d' % code, s)
+          s = re.sub(r'versionName "[^"]*"', 'versionName "1.0"', s)
+          if 'signingConfigs' not in s:
+              s = s.replace('    buildTypes {', '''    signingConfigs {
+                  release {
+                      storeFile file(System.getenv("CM_KEYSTORE_PATH"))
+                      storePassword System.getenv("CM_KEYSTORE_PASSWORD")
+                      keyAlias System.getenv("CM_KEY_ALIAS")
+                      keyPassword System.getenv("CM_KEY_PASSWORD")
+                  }
+              }
+              buildTypes {''', 1)
+              s = re.sub(r'(buildTypes \{\s*release \{)', r'\1\n            signingConfig signingConfigs.release', s, count=1)
+          open(p, 'w').write(s)
+          assert 'signingConfig signingConfigs.release' in s, 'signing not applied'
+          print('versionCode', code)
+          PY
+          grep -n "versionCode\|signingConfig\|CM_KEY" android/app/build.gradle
+      - name: بناء ملف AAB
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+      - ios-app/android/app/build/outputs/**/*.aab

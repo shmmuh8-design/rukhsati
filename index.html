@@ -550,7 +550,7 @@ function hub(){
 }
 $('joinBtn').onclick = join; $('joinTop').onclick = hub;
 // مدخل الإدارة المخفي: 3 ضغطات سريعة على شعار «ت»
-(function(){ let n = 0, t; $('plate').addEventListener('click', () => { n++; clearTimeout(t); t = setTimeout(() => n = 0, 900); if(n >= 3){ n = 0; location.href = /^https?:$/.test(location.protocol) ? 'admin.html' : 'https://shmmuh8-design.github.io/rukhsati/admin.html'; } }); })();
+(function(){ let n = 0, t; $('plate').addEventListener('click', () => { n++; clearTimeout(t); t = setTimeout(() => n = 0, 900); if(n >= 3){ n = 0; location.href = (/^https?:$/.test(location.protocol) && location.hostname !== 'localhost') ? 'admin.html' : 'https://shmmuh8-design.github.io/rukhsati/admin.html'; } }); })();
 applyLang(); refresh();
 </script>
 

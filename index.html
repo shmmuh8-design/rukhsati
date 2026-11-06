@@ -503,6 +503,9 @@ function learnAccount(){
       el('p',{class:'meta',text:gn(A.area)+' — '+gn(A.gov)+' · '+tt(GEAR_T,A.gear)+' · '+tt(WANT_T,A.want)}),
       A.notes ? el('p',{class:'hint',text:A.notes}) : null,
       el('label',{class:'ck'}, av, el('span',{text:L('طلبي ظاهر للمعلّمين (طفّه لما تلقى معلّم)','Show my request to instructors (turn off once you find one)')})),
+      el('button',{class:'btn main',type:'button',text:L('🔎 شوف المعلّمين في ','🔎 See instructors in ')+gn(A.area),onclick:()=>{
+        if(GOV[A.gov]){ S.gov = A.gov; S.area = A.area; LS.set('rk-s', S); } close(); fill(); draw();
+        setTimeout(()=>$('resT')?.scrollIntoView({behavior:'smooth',block:'start'}), 150); }}),
       el('div',{class:'acts'}, el('button',{class:'btn main',type:'button',text:L('✏️ تعديل طلبي','✏️ Edit'),onclick:()=>{ close(); sheet((b2,c2)=>learnForm(b2,c2,A)); }}),
         el('button',{class:'btn line',type:'button',text:L('🔑 رمز الدخول','🔑 Login code'),onclick:()=>copy(LME.code)})),
       el('button',{class:'btn line',type:'button',text:L('تسجيل خروج','Log out'),onclick:()=>{ saveL(null); close(); toast(L('طلعت من حسابك','Logged out')); }}),

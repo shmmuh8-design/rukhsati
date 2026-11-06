@@ -53,7 +53,7 @@ button{cursor:pointer}
 .langsw button[aria-pressed="true"]{background:var(--sign);color:var(--sign-ink)}
 .foot{text-align:center;color:var(--muted);font-size:.85rem;line-height:1.9;padding-block:8px 4px;border-top:1px solid var(--line)}
 .foot b{color:var(--fg)}
-.ghost{border:1.5px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:999px;padding:7px 14px;font-weight:600;font-size:.85rem}
+.ghost{white-space:nowrap;border:1.5px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:999px;padding:7px 14px;font-weight:600;font-size:.85rem}
 .road h1{margin:0;font:900 clamp(1.6rem,6.5vw,2.2rem)/1.35 var(--display);text-wrap:balance}
 .road p{margin:0;opacity:.82;max-width:34em}
 .demo{display:inline-flex;gap:6px;align-items:center;background:rgba(242,183,5,.16);color:var(--sign);border-radius:999px;padding:3px 12px;font-size:.78rem;font-weight:600}
@@ -128,7 +128,7 @@ pre.msg{white-space:pre-wrap;font:.9rem/1.8 var(--body);background:var(--bg);bor
   <div class="wrap">
     <div class="top">
       <div class="langsw" role="group" aria-label="Language / اللغة"><button type="button" id="lnEn" lang="en">English</button><button type="button" id="lnAr" lang="ar">العربية</button></div>
-      <button class="ghost" type="button" id="joinTop" data-t="iamT">👤 دخول / تسجيل</button>
+      <div style="display:flex;gap:8px;align-items:center"><button class="ghost" type="button" id="outTop" hidden>🚪 خروج</button><button class="ghost" type="button" id="joinTop">👤 دخول / تسجيل</button></div>
     </div>
     <div class="hero">
       <div class="plate" aria-hidden="true" id="plate" style="cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none">ت</div>
@@ -191,7 +191,14 @@ async function refresh(){
   LOADING = false; draw();
 }
 let ME = null; try{ ME = JSON.parse(localStorage.getItem('rk-me') || 'null'); }catch(e){}
-const saveMe = v => { ME = v; try{ v ? localStorage.setItem('rk-me', JSON.stringify(v)) : localStorage.removeItem('rk-me'); }catch(e){} };
+const saveMe = v => { ME = v; try{ v ? localStorage.setItem('rk-me', JSON.stringify(v)) : localStorage.removeItem('rk-me'); }catch(e){} topBar(); };
+// شريط الحساب فوق: «حسابي» + زر «خروج» ظاهر لما يكون المعلّم أو المتعلّم داخل
+function topBar(){
+  const j = document.getElementById('joinTop'), o = document.getElementById('outTop'); if(!j || !o) return;
+  const inn = !!(ME || (typeof LME !== 'undefined' && LME));
+  j.textContent = inn ? (ME ? L('🚗 حسابي','🚗 My account') : L('🎓 طلبي','🎓 My request')) : L('👤 دخول / تسجيل','👤 Sign in / Join');
+  o.textContent = L('🚪 خروج','🚪 Log out'); o.hidden = !inn;
+}
 const normPhone = p => { let d = String(p||'').replace(/[٠-٩]/g, c => '٠١٢٣٤٥٦٧٨٩'.indexOf(c)).replace(/\D/g,''); if(d.startsWith('00')) d = d.slice(2); if(/^[79]\d{7}$/.test(d)) d = '968' + d; return d; };
 const $ = id => document.getElementById(id);
 const LS = { get(k,d){ try{ const v = JSON.parse(localStorage.getItem(k)||'null'); return v==null?d:v; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} } };
@@ -225,7 +232,7 @@ function applyLang(){
   document.querySelectorAll('[data-t]').forEach(n => { const v = T[n.dataset.t]; if(v) n.textContent = v[EN()?1:0]; });
   $('plate').textContent = L('ت','R'); $('lnEn').setAttribute('aria-pressed', String(EN())); $('lnAr').setAttribute('aria-pressed', String(!EN()));
   document.title = L('رخصتي','Rukhsati');
-  fill(); draw();
+  topBar(); fill(); draw();
 }
 const setLang = l => { LANG = l; LS.set('rk-lang', LANG); applyLang(); };
 $('lnEn').onclick = () => setLang('en'); $('lnAr').onclick = () => setLang('ar');
@@ -417,7 +424,7 @@ function account(){
 }
 /* ---------------- المتعلّمين ---------------- */
 let LME = null; try{ LME = JSON.parse(localStorage.getItem('rk-learner') || 'null'); }catch(e){}
-const saveL = v => { LME = v; try{ v ? localStorage.setItem('rk-learner', JSON.stringify(v)) : localStorage.removeItem('rk-learner'); }catch(e){} };
+const saveL = v => { LME = v; try{ v ? localStorage.setItem('rk-learner', JSON.stringify(v)) : localStorage.removeItem('rk-learner'); }catch(e){} topBar(); };
 const GEAR_T = { auto:['أوتوماتيك','Automatic'], manual:['عادي (جير)','Manual'], any:['ما يفرق','Either'] };
 const WANT_T = { any:['معلّم أو معلّمة','Male or female'], m:['معلّم','Male instructor'], f:['معلّمة','Female instructor'] };
 const tt = (m, k) => m[k] ? m[k][EN()?1:0] : k;
@@ -549,6 +556,7 @@ function hub(){
   });
 }
 $('joinBtn').onclick = join; $('joinTop').onclick = hub;
+$('outTop').onclick = () => { saveMe(null); saveL(null); toast(L('طلعت من حسابك ✅','Logged out ✅')); };
 // مدخل الإدارة المخفي: 3 ضغطات سريعة على شعار «ت»
 (function(){ let n = 0, t; $('plate').addEventListener('click', () => { n++; clearTimeout(t); t = setTimeout(() => n = 0, 900); if(n >= 3){ n = 0; location.href = (/^https?:$/.test(location.protocol) && location.hostname !== 'localhost') ? 'admin.html' : 'https://shmmuh8-design.github.io/rukhsati/admin.html'; } }); })();
 applyLang(); refresh();

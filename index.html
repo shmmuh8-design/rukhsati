@@ -368,7 +368,7 @@ function instForm(b, close, A){
       if(A){ await rpc('rk_update', { ...common, p_phone:ME.phone, p_code:ME.code }); toast(L('انحفظت التعديلات ✅','Saved ✅')); close(); refresh(); account(); }
       else {
         const r = await rpc('rk_register', { ...common, p_sex:sexSel.value, p_phone:phone, p_lic:lic.value.trim() });
-        saveMe({ phone, code:r.code }); form.remove(); send.remove(); $('jLogin')?.remove();
+        saveMe({ phone, code:r.code }); form.remove(); send.remove(); $('jLogin')?.remove(); refresh();
         b.insertBefore(el('div',{style:'display:grid;gap:10px'},
           el('div',{class:'ok-box',text:L('✅ تم التسجيل! حسابك ظاهر للمتعلّمين الحين.','✅ Done! Your profile is now visible to learners.')}),
           el('p',{style:'margin:0;font-weight:800',text:L('رمز الدخول حقك:','Your login code:')}),
@@ -552,6 +552,9 @@ $('joinBtn').onclick = join; $('joinTop').onclick = hub;
 // مدخل الإدارة المخفي: 3 ضغطات سريعة على شعار «ت»
 (function(){ let n = 0, t; $('plate').addEventListener('click', () => { n++; clearTimeout(t); t = setTimeout(() => n = 0, 900); if(n >= 3){ n = 0; location.href = (/^https?:$/.test(location.protocol) && location.hostname !== 'localhost') ? 'admin.html' : 'https://shmmuh8-design.github.io/rukhsati/admin.html'; } }); })();
 applyLang(); refresh();
+// keep the instructor list fresh: when coming back to the app (e.g. from WhatsApp) and every 2 minutes
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') refresh(); });
+setInterval(() => { if(document.visibilityState === 'visible') refresh(); }, 120000);
 </script>
 
 </body>

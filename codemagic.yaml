@@ -101,9 +101,15 @@ workflows:
               s = re.sub(r'(buildTypes \{\s*release \{)', r'\1\n            signingConfig signingConfigs.release', s, count=1)
           open(p, 'w').write(s)
           assert 'signingConfig signingConfigs.release' in s, 'signing not applied'
+          # جوجل بلاي تطلب minSdk 24 أو أعلى (Play automatic protection)
+          v = 'android/variables.gradle'
+          t = open(v).read()
+          t = re.sub(r'minSdkVersion\s*=\s*\d+', 'minSdkVersion = 24', t)
+          open(v, 'w').write(t)
+          assert 'minSdkVersion = 24' in t, 'minSdk not applied'
           print('versionCode', code)
           PY
-          grep -n "versionCode\|signingConfig\|CM_KEY" android/app/build.gradle
+          grep -n "versionCode\|signingConfig\|CM_KEY" android/app/build.gradle; grep -n minSdk android/variables.gradle
       - name: بناء ملف AAB
         script: |
           cd android

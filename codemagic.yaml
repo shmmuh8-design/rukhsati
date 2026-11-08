@@ -105,11 +105,18 @@ workflows:
           v = 'android/variables.gradle'
           t = open(v).read()
           t = re.sub(r'minSdkVersion\s*=\s*\d+', 'minSdkVersion = 24', t)
+          # جوجل بلاي تطلب targetSdk 36 (Android 16)
+          t = re.sub(r'compileSdkVersion\s*=\s*\d+', 'compileSdkVersion = 36', t)
+          t = re.sub(r'targetSdkVersion\s*=\s*\d+', 'targetSdkVersion = 36', t)
           open(v, 'w').write(t)
-          assert 'minSdkVersion = 24' in t, 'minSdk not applied'
+          assert 'minSdkVersion = 24' in t and 'targetSdkVersion = 36' in t, 'sdk versions not applied'
+          gp = 'android/gradle.properties'
+          g = open(gp).read()
+          if 'suppressUnsupportedCompileSdk' not in g:
+              open(gp, 'a').write('\nandroid.suppressUnsupportedCompileSdk=36\n')
           print('versionCode', code)
           PY
-          grep -n "versionCode\|signingConfig\|CM_KEY" android/app/build.gradle; grep -n minSdk android/variables.gradle
+          grep -n "versionCode\|signingConfig\|CM_KEY" android/app/build.gradle; grep -n "SdkVersion" android/variables.gradle
       - name: بناء ملف AAB
         script: |
           cd android

@@ -47,6 +47,8 @@ workflows:
         script: |
           cd ios/App
           agvtool new-version -all $((BUILD_NUMBER + 1))
+          sed -i '' 's/MARKETING_VERSION = [^;]*;/MARKETING_VERSION = 1.1;/g' App.xcodeproj/project.pbxproj
+          grep -m1 MARKETING_VERSION App.xcodeproj/project.pbxproj
       - name: بناء ملف IPA
         script: |
           xcode-project build-ipa --workspace ios/App/App.xcworkspace --scheme App
@@ -87,7 +89,7 @@ workflows:
           s = open(p).read()
           code = int(os.environ.get('BUILD_NUMBER', '1')) + 1
           s = re.sub(r'versionCode \d+', 'versionCode %d' % code, s)
-          s = re.sub(r'versionName "[^"]*"', 'versionName "1.0"', s)
+          s = re.sub(r'versionName "[^"]*"', 'versionName "1.1"', s)
           if 'signingConfigs' not in s:
               s = s.replace('    buildTypes {', '''    signingConfigs {
                   release {

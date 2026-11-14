@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800;900&display=swap">
 <style>
-/* Layout: black-and-gold app shell — compact top bar, five views switched by a glass bottom tab bar. Home = night-road hero, map card, live stats, gold tiles, a horizontal rail of instructors; sheets slide up for requests and accounts. */
+/* Layout: black-and-gold 3D app shell — compact top bar, five views switched by a raised bottom tab bar. Home = 3D night-road hero, live stats, keycap tiles, readiness ring, daily question, favorites and instructors rails; sheets slide up for requests and accounts. */
 :root{
   --bg:#07070a; --surface:#121215; --surface-2:#1a1a1f; --fg:#f6f1e3; --muted:#a8a08c; --line:rgba(242,193,78,.2); --line-2:rgba(255,255,255,.08);
   --gold:#f2c14e; --gold-d:#b8862b; --gold-l:#ffe39a; --sign:#f2c14e; --sign-ink:#141005; --asphalt:#0d0d10; --chip:#1c1c22;
@@ -60,24 +60,31 @@ main .wrap{padding-block:16px 24px;display:flex;flex-direction:column;gap:18px}
 h3.sec{margin:6px 0 -6px;font:900 1.15rem var(--display);color:var(--gold-l)}
 .gl{background:linear-gradient(180deg,#17171c,#0f0f12);border:1px solid var(--line);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 30px rgba(0,0,0,.35)}
 
-/* hero */
-.hero{position:relative;border-radius:24px;overflow:hidden;min-height:300px;border:1px solid var(--line);box-shadow:0 18px 40px rgba(0,0,0,.5)}
-.hero svg.art{position:absolute;inset:0;width:100%;height:100%}
-html[dir="rtl"] .hero svg.art{transform:scaleX(-1)}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 30%,rgba(0,0,0,.55));pointer-events:none}
-html[dir="ltr"] .hero::after{background:linear-gradient(270deg,transparent 30%,rgba(0,0,0,.55))}
-.hero .htxt{position:relative;z-index:1;padding:22px 20px 20px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;max-width:62%}
-.hero .k1{font:800 1.25rem/1.4 var(--display);margin:0;text-shadow:0 2px 10px #000}
-.hero .k2{font:900 clamp(1.9rem,8.4vw,2.6rem)/1.15 var(--display);margin:0;background:var(--g-grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 10px rgba(0,0,0,.8))}
-.hero .k3{font:800 1.15rem/1.4 var(--display);margin:0 0 10px;text-shadow:0 2px 10px #000}
-.btn.hero-b{padding:11px 22px;font-size:1rem;border-radius:999px}
-
-/* map card on home */
-.mapcard{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;padding:16px;overflow:hidden;position:relative}
-.mapcard h3{margin:0;font:900 1.25rem var(--display);display:flex;gap:6px;align-items:center}
-.mapcard h3 .ico{color:var(--gold)}
-.mapcard p{margin:2px 0 10px;color:var(--muted);font-size:.84rem}
-.mapcard .mini{width:100%;height:120px}
+/* hero — 3D night road */
+.hero{position:relative;border-radius:26px;overflow:hidden;min-height:310px;border:1px solid var(--line);background:radial-gradient(120% 80% at 30% 38%,#2a1f0c 0%,#0b0a08 55%,#050506 100%);box-shadow:0 2px 0 rgba(255,227,154,.12) inset,0 22px 44px rgba(0,0,0,.6),0 6px 0 #030304;isolation:isolate}
+.scene{position:absolute;inset:0;pointer-events:none}
+html[dir="ltr"] .scene{transform:scaleX(-1)}
+.scene .stars{position:absolute;inset:0 0 55% 0;background-image:radial-gradient(1px 1px at 12% 20%,#fff,transparent),radial-gradient(1px 1px at 33% 12%,#fff,transparent),radial-gradient(1.4px 1.4px at 52% 28%,#fff,transparent),radial-gradient(1px 1px at 70% 10%,#fff,transparent),radial-gradient(1px 1px at 86% 26%,#fff,transparent),radial-gradient(1.2px 1.2px at 22% 38%,#fff,transparent),radial-gradient(1px 1px at 62% 40%,#fff,transparent);opacity:.75}
+.scene .moon{position:absolute;left:12%;top:11%;width:34px;height:34px;border-radius:50%;box-shadow:inset -9px 3px 0 0 #ffefc4;filter:drop-shadow(0 0 14px rgba(255,233,176,.55))}
+.scene .ridge{position:absolute;left:0;right:0;top:30%;width:100%;height:24%}
+.road3d{position:absolute;left:0;right:0;bottom:0;top:46%;perspective:230px;perspective-origin:30% 0%;overflow:hidden}
+.road-plane{position:absolute;left:30%;top:0;width:240%;height:260%;transform:translateX(-50%) rotateX(72deg);transform-origin:50% 0;
+  background:linear-gradient(90deg,transparent 0 38%,#f2c14e 38% 38.6%,#141418 38.6% 61.4%,#f2c14e 61.4% 62%,transparent 62%),
+  radial-gradient(60% 40% at 50% 0%,rgba(242,193,78,.18),transparent 70%),#0a0907}
+.road-plane::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1.1%;transform:translateX(-50%);background:repeating-linear-gradient(180deg,#ffe39a 0 46px,transparent 46px 104px);animation:dash .9s linear infinite}
+.road-plane::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,5,6,.95) 0%,transparent 22%)}
+@keyframes dash{to{background-position:0 104px}}
+.horizon{position:absolute;left:0;right:0;top:44%;height:16%;background:radial-gradient(40% 100% at 30% 50%,rgba(255,214,122,.35),transparent 70%);filter:blur(4px)}
+.car3d{position:absolute;left:30%;bottom:6%;width:132px;transform:translateX(-50%);filter:drop-shadow(0 12px 10px rgba(0,0,0,.7));animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateX(-50%) translateY(-2px)}}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(270deg,rgba(0,0,0,.66) 0%,rgba(0,0,0,.25) 45%,transparent 70%);pointer-events:none;z-index:0}
+html[dir="ltr"] .hero::after{background:linear-gradient(90deg,rgba(0,0,0,.66) 0%,rgba(0,0,0,.25) 45%,transparent 70%)}
+.hero .htxt{position:relative;z-index:1;padding:22px 20px 20px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;max-width:60%;margin-inline-start:0}
+.hero .k1{font:800 1.2rem/1.4 var(--display);margin:0;text-shadow:0 2px 10px #000}
+.hero .k2{font:900 clamp(1.9rem,8.4vw,2.6rem)/1.12 var(--display);margin:0;background:var(--g-grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 #6b4a10) drop-shadow(0 6px 12px rgba(0,0,0,.85))}
+.hero .k3{font:800 1.12rem/1.4 var(--display);margin:0 0 12px;text-shadow:0 2px 10px #000}
+.btn.hero-b{padding:12px 22px;font-size:1rem;border-radius:999px}
+@media (prefers-reduced-motion:reduce){.road-plane::before,.car3d,.plate{animation:none!important}}
 
 /* stats */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);padding:12px 4px}
@@ -115,27 +122,11 @@ html[dir="ltr"] .hero::after{background:linear-gradient(270deg,transparent 30%,r
 .join h3{margin:0;font:900 1.3rem var(--display)}
 .join p{margin:0;color:var(--muted)}
 
-/* map view */
+/* find view */
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chips button{flex:none;border:1px solid var(--line);background:var(--chip);color:var(--fg);border-radius:999px;padding:6px 14px;font-weight:700;font-size:.84rem}
 .chips button[aria-pressed="true"]{background:var(--g-grad);color:var(--sign-ink);border-color:transparent}
-.mapwrap{padding:6px;overflow:hidden}
-#mapBox svg{display:block;width:100%;height:min(62vh,520px);touch-action:manipulation}
-#omMap .pp{fill:url(#pinG);fill:#f2c14e;stroke:#1a1405;stroke-width:2}
-#omMap .pin text{font:900 15px var(--display);fill:#1a1405}
-#omMap .pin{cursor:pointer}
-#omMap .pin.sel .pp{fill:#fff3c4}
-#omMap .dot circle:first-child{fill:rgba(242,193,78,.45)}
-#omMap .dot.sel circle:nth-child(2){fill:#fff3c4}
-#omMap .dot{cursor:pointer}
-#omMap .pulse{fill:none;stroke:#ffe39a;stroke-width:3;opacity:.8}
-#omMap .lbl{font:900 17px var(--display);fill:#ffe39a;paint-order:stroke;stroke:#000;stroke-width:5px}
-@media (prefers-reduced-motion:no-preference){#omMap .pulse{animation:pl 1.6s ease-out infinite;transform-box:fill-box;transform-origin:center}@keyframes pl{from{transform:scale(.6);opacity:.9}to{transform:scale(1.5);opacity:0}}}
-.mapinfo{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px 6px}
-.mapinfo div{display:grid}
-.mapinfo span{color:var(--muted);font-size:.82rem}
-
 /* filters + list (existing) */
 .panel{background:linear-gradient(180deg,#17171c,#0f0f12);border:1px solid var(--line);border-radius:20px;padding:16px;display:grid;gap:14px}
 .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
@@ -191,7 +182,7 @@ select,textarea,input[type=text],input[type=tel],input[type=number],input[type=d
 .lc-a{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;grid-column:2}
 
 /* learn */
-.segbar{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:16px;background:#0e0e11;border:1px solid var(--line)}
+.segbar{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;border-radius:16px;background:#0e0e11;border:1px solid var(--line)}
 .segbar button{border:0;background:transparent;border-radius:12px;padding:8px 4px;font-weight:800;font-size:.84rem;color:var(--muted)}
 .segbar button[aria-pressed="true"]{background:var(--g-grad);color:var(--sign-ink)}
 .note{margin:0;font-size:.82rem;color:var(--muted);background:rgba(242,193,78,.06);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
@@ -256,6 +247,51 @@ pre.msg{white-space:pre-wrap;font:.9rem/1.8 var(--body);background:#0b0b0e;borde
 @media (max-width:420px){.who{grid-template-columns:auto minmax(0,1fr)}.price{grid-column:1/-1;text-align:start;display:flex;gap:8px;align-items:baseline}.tile{font-size:.72rem}.tile-i{width:42px;height:42px}}
 .who>div:nth-child(2){text-align:start}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.5}}.view{animation:fade .25s ease-out}@keyframes fade{from{opacity:.4;transform:translateY(6px)}}}
+
+/* ===== 3D layer ===== */
+.gl,.card,.panel,.join{box-shadow:inset 0 1px 0 rgba(255,255,255,.07),inset 0 -2px 0 rgba(0,0,0,.45),0 5px 0 #040405,0 16px 30px rgba(0,0,0,.5)}
+.plate{background:radial-gradient(circle at 35% 28%,#fff3c4 0%,#f2c14e 38%,#a8761f 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,.7),inset 0 -3px 0 rgba(90,60,10,.6),0 0 0 1.5px #ffe39a,0 4px 0 #6b4a10,0 10px 20px rgba(242,193,78,.35);animation:coin 6s ease-in-out infinite;transform-style:preserve-3d}
+@keyframes coin{0%,80%,100%{transform:rotateY(0)}90%{transform:rotateY(180deg)}}
+.tile{position:relative;background:linear-gradient(180deg,#26262d,#141418);border:1px solid rgba(242,193,78,.28);border-bottom:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 6px 0 #5e4512,0 7px 0 #f2c14e40,0 14px 22px rgba(0,0,0,.55);transition:transform .12s,box-shadow .12s;margin-bottom:6px}
+.tile:active{transform:translateY(5px);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 1px 0 #5e4512,0 4px 10px rgba(0,0,0,.5)}
+.tile-i{background:radial-gradient(circle at 32% 26%,#fff3c4,#f2c14e 45%,#9c6c1a 100%);color:#1a1405;border:0;box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(90,60,10,.55),0 4px 10px rgba(0,0,0,.5)}
+.btn.main,.btn.sign{box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -2px 0 rgba(120,80,10,.5),0 4px 0 #7a5614,0 10px 18px rgba(242,193,78,.22);transition:transform .1s,box-shadow .1s}
+.btn.main:active,.btn.sign:active{transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 1px 0 #7a5614}
+.btn.wa{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 0 #0f5c31}
+.fc{transform-style:preserve-3d;transition:transform .25s ease;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 5px 0 #040405,0 16px 26px rgba(0,0,0,.55)}
+.fc-av{box-shadow:inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 0 rgba(90,60,10,.5),0 0 0 3px #0f0f12,0 0 0 4.5px var(--gold),0 8px 14px rgba(0,0,0,.5)}
+#tabbar{box-shadow:0 6px 0 #040405,0 18px 34px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.08)}
+#tabbar button[aria-current="page"] .ico{filter:drop-shadow(0 3px 0 #6b4a10) drop-shadow(0 0 8px rgba(242,193,78,.55));transform:translateY(-2px)}
+.fav{border:0;background:none;font-size:1.25rem;line-height:1;padding:2px;filter:drop-shadow(0 2px 0 #000)}
+/* readiness */
+.ready{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;padding:16px}
+.ring{--p:0;width:112px;height:112px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(#f2c14e calc(var(--p)*1%),#24242b 0);box-shadow:inset 0 3px 0 rgba(255,255,255,.12),0 6px 0 #040405,0 12px 24px rgba(0,0,0,.6)}
+.ring::before{content:"";position:absolute;inset:11px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#24242b,#0b0b0e);box-shadow:inset 0 4px 8px rgba(0,0,0,.7),0 -1px 0 rgba(255,255,255,.06)}
+.ring b{position:relative;font:900 1.7rem/1 var(--display);background:var(--g-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ring small{position:absolute;bottom:26px;font-size:.62rem;color:var(--muted);font-weight:800}
+.rk{display:grid;gap:7px}
+.rk h3{margin:0;font:900 1.15rem var(--display)}
+.rk-row{display:grid;grid-template-columns:5.6em 1fr auto;gap:8px;align-items:center;font-size:.78rem;color:var(--muted);font-weight:800}
+.rk-row .bar{height:7px}
+/* daily question */
+.daily{padding:16px;display:grid;gap:10px;background:radial-gradient(110% 120% at 0% 0%,rgba(242,193,78,.16),transparent 55%),linear-gradient(180deg,#17171c,#0f0f12)}
+.daily .dq-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.daily .dq-h b{font:900 1.05rem var(--display);color:var(--gold-l)}
+.daily h4{margin:0;font:800 1.02rem/1.6 var(--display)}
+.daily .sg{width:84px;height:84px;justify-self:center}
+/* skills */
+.skl{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 14px;width:100%;text-align:start;color:var(--fg)}
+.skl .si{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:1.35rem;background:#0e0e11;border:1px solid var(--line);box-shadow:inset 0 -2px 0 rgba(0,0,0,.5)}
+.skl small{display:block;color:var(--muted);font-size:.78rem}
+.lvl{font-size:.74rem;font-weight:800;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.lvl.l0{background:#22222a;color:var(--muted)}
+.lvl.l1{background:rgba(242,193,78,.15);color:var(--gold)}
+.lvl.l2{background:rgba(60,198,132,.16);color:var(--go)}
+.chk{display:flex;gap:10px;align-items:center;padding:10px 14px;border:0;border-top:1px solid var(--line-2);background:none;width:100%;text-align:start;color:var(--fg);font-weight:700}
+.chk:first-of-type{border-top:0}
+.chk i{width:24px;height:24px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center;font-style:normal;flex:none;font-size:.85rem}
+.chk.on i{background:var(--g-grad);border-color:transparent;color:var(--sign-ink)}
+.chk.on span{color:var(--muted);text-decoration:line-through}
 </style>
 </head>
 <body>
@@ -274,42 +310,30 @@ pre.msg{white-space:pre-wrap;font:.9rem/1.8 var(--body);background:#0b0b0e;borde
   <!-- ===== الرئيسية ===== -->
   <section class="view" id="v-home">
     <div class="hero">
-      <svg class="art" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <defs>
-          <linearGradient id="hs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05060a"/><stop offset=".55" stop-color="#16110a"/><stop offset="1" stop-color="#2a1d0b"/></linearGradient>
-          <linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe39a"/><stop offset="1" stop-color="#c48f2a"/></linearGradient>
-          <linearGradient id="hb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9ecef"/><stop offset=".5" stop-color="#9aa3ab"/><stop offset="1" stop-color="#5b636b"/></linearGradient>
-          <radialGradient id="hl" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff6d0" stop-opacity=".95"/><stop offset="1" stop-color="#ffe39a" stop-opacity="0"/></radialGradient>
-          <radialGradient id="hm" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffe9b0" stop-opacity=".35"/><stop offset="1" stop-color="#ffe9b0" stop-opacity="0"/></radialGradient>
-        </defs>
-        <rect width="400" height="300" fill="url(#hs)"/>
-        <g fill="#fff" opacity=".7"><circle cx="40" cy="22" r=".9"/><circle cx="120" cy="40" r=".7"/><circle cx="210" cy="18" r="1"/><circle cx="300" cy="30" r=".8"/><circle cx="360" cy="14" r="1"/><circle cx="260" cy="58" r=".6"/><circle cx="80" cy="70" r=".6"/><circle cx="330" cy="70" r=".7"/></g>
-        <circle cx="330" cy="58" r="60" fill="url(#hm)"/><circle cx="330" cy="58" r="13" fill="#ffefc4"/><circle cx="335" cy="54" r="12" fill="#16110a"/>
-        <path d="M0 175 60 130l40 25 55-45 50 38 40-30 55 40 50-28 50 30v135H0z" fill="#120e08"/>
-        <path d="M0 200 70 160l50 22 60-40 60 42 70-30 90 40v106H0z" fill="#0c0a06"/>
-        <path d="M230 170q40-30 90-24 50 6 80 30v24H230z" fill="#15100a"/>
-        <g transform="translate(262 112)">
-          <path d="M0 50V22h8v-6h5v6h6v-6h5v6h8v28z" fill="#2a2013" stroke="url(#hg)" stroke-width=".8"/>
-          <path d="M30 50V30h46v20z" fill="#241b10" stroke="url(#hg)" stroke-width=".8"/>
-          <path d="M30 30v-5h5v5h6v-5h5v5h6v-5h5v5h6v-5h5v5h8v-5" fill="none" stroke="url(#hg)" stroke-width=".8"/>
-          <path d="M76 50V14h7v-5h4v5h5v-5h4v5h7v36z" fill="#2a2013" stroke="url(#hg)" stroke-width=".8"/>
-          <rect x="11" y="30" width="3" height="5" fill="#ffd57a"/><rect x="86" y="24" width="3" height="5" fill="#ffd57a"/><rect x="50" y="38" width="6" height="12" rx="3" fill="#ffd57a" opacity=".85"/>
-        </g>
-        <path d="M-20 300C80 270 160 240 230 215s120-28 190-26v20c-60 0-110 6-170 26S90 292 40 320H-20z" fill="#0d0d0f"/>
-        <path d="M-20 300C80 270 160 240 230 215s120-28 190-26" fill="none" stroke="url(#hg)" stroke-width="2.4" opacity=".95"/>
-        <path d="M40 320c50-28 120-58 210-79s110-26 170-26" fill="none" stroke="url(#hg)" stroke-width="2.4" opacity=".9"/>
-        <path d="M10 311C100 278 170 252 240 228s110-26 180-27" fill="none" stroke="#ffe39a" stroke-width="2" stroke-dasharray="14 12" opacity=".8"/>
-        <g transform="translate(232 196) scale(.95)">
-          <ellipse cx="62" cy="50" rx="64" ry="7" fill="#000" opacity=".55"/>
-          <path d="M4 40c0-8 6-12 16-14l22-4 16-12c6-4 14-6 22-6h18c10 0 18 4 24 10l10 9c8 1 14 5 14 12v7c0 3-2 5-5 5H9c-3 0-5-2-5-5z" fill="url(#hb)"/>
-          <path d="M48 22l12-10c4-3 9-4 14-4h10v14z" fill="#1b222a"/><path d="M88 8h6c8 0 13 3 17 8l5 6H88z" fill="#1b222a"/>
-          <path d="M6 38h126" stroke="#fff" stroke-opacity=".4"/>
-          <circle cx="30" cy="48" r="9.5" fill="#111"/><circle cx="30" cy="48" r="5" fill="#8f979e"/>
-          <circle cx="110" cy="48" r="9.5" fill="#111"/><circle cx="110" cy="48" r="5" fill="#8f979e"/>
-          <path d="M132 32h6v6h-6z" fill="#fff6d0"/>
-          <ellipse cx="150" cy="38" rx="34" ry="12" fill="url(#hl)"/>
-        </g>
-      </svg>
+      <div class="scene" aria-hidden="true">
+        <div class="stars"></div><div class="moon"></div>
+        <svg class="ridge" viewBox="0 0 400 100" preserveAspectRatio="none"><defs><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe39a"/><stop offset="1" stop-color="#c48f2a"/></linearGradient></defs>
+          <path d="M0 70 50 38l38 20 52-36 46 30 40-22 50 32 46-20 78 26v32H0z" fill="#120e08"/>
+          <g transform="translate(250 40)"><path d="M0 40V18h7v-5h4v5h5v-5h4v5h7v22z" fill="#2a2013" stroke="url(#fg)" stroke-width=".9"/><path d="M27 40V24h38v16z" fill="#241b10" stroke="url(#fg)" stroke-width=".9"/><path d="M65 40V11h6V7h4v4h4V7h4v4h6v29z" fill="#2a2013" stroke="url(#fg)" stroke-width=".9"/><rect x="10" y="25" width="3" height="4" fill="#ffd57a"/><rect x="42" y="31" width="5" height="9" rx="2.5" fill="#ffd57a" opacity=".85"/><rect x="74" y="18" width="3" height="4" fill="#ffd57a"/></g>
+          <path d="M0 84 70 60l60 18 70-24 70 26 60-16 70 22v14H0z" fill="#0b0906"/></svg>
+        <div class="horizon"></div>
+        <div class="road3d"><div class="road-plane"></div></div>
+        <svg class="car3d" viewBox="0 0 160 100"><defs>
+          <linearGradient id="cb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f4f6"/><stop offset=".45" stop-color="#aab1b9"/><stop offset="1" stop-color="#4b525a"/></linearGradient>
+          <linearGradient id="cw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b4654"/><stop offset="1" stop-color="#0e1218"/></linearGradient>
+          <radialGradient id="tl" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff6b5b"/><stop offset=".6" stop-color="#d4231a"/><stop offset="1" stop-color="#d4231a" stop-opacity="0"/></radialGradient></defs>
+          <ellipse cx="80" cy="92" rx="66" ry="7" fill="#000" opacity=".7"/>
+          <rect x="16" y="76" width="22" height="16" rx="5" fill="#111"/><rect x="122" y="76" width="22" height="16" rx="5" fill="#111"/>
+          <path d="M44 14h72c8 0 13 4 16 11l9 23c9 2 13 7 13 14v15c0 4-3 7-7 7H13c-4 0-7-3-7-7V62c0-7 4-12 13-14l9-23c3-7 8-11 16-11z" fill="url(#cb)"/>
+          <path d="M48 20h64c5 0 8 3 10 8l6 18H32l6-18c2-5 5-8 10-8z" fill="url(#cw)"/>
+          <path d="M52 23h40l-4 8H48z" fill="#fff" opacity=".12"/>
+          <rect x="12" y="58" width="34" height="11" rx="5" fill="#8b0f0a"/><rect x="114" y="58" width="34" height="11" rx="5" fill="#8b0f0a"/>
+          <ellipse cx="29" cy="63.5" rx="22" ry="11" fill="url(#tl)" opacity=".9"/><ellipse cx="131" cy="63.5" rx="22" ry="11" fill="url(#tl)" opacity=".9"/>
+          <rect x="17" y="60" width="24" height="6" rx="3" fill="#ff8a7a"/><rect x="119" y="60" width="24" height="6" rx="3" fill="#ff8a7a"/>
+          <rect x="60" y="62" width="40" height="15" rx="3" fill="#f2c14e" stroke="#1a1405" stroke-width="1.5"/><text x="80" y="74" text-anchor="middle" font-family="Cairo,sans-serif" font-weight="900" font-size="12" fill="#1a1405">تعليم</text>
+          <path d="M8 52h144" stroke="#fff" stroke-opacity=".35"/>
+        </svg>
+      </div>
       <div class="htxt">
         <p class="k1" data-t="hk1">طريقك نحو</p>
         <p class="k2" data-t="hk2">رخصة القيادة</p>
@@ -318,11 +342,6 @@ pre.msg{white-space:pre-wrap;font:.9rem/1.8 var(--body);background:#0b0b0e;borde
       </div>
     </div>
 
-    <button class="gl mapcard" type="button" id="mapCta" style="text-align:start;color:inherit">
-      <div><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></svg><span data-t="mcH">ابحث بالخريطة</span></h3><p data-t="mcP">شوف المعلّمين في كل ولاية على خريطة عُمان</p><span class="btn line sm" data-t="mcB">🗺️ عرض الخريطة</span></div>
-      <svg class="mini" viewBox="0 0 200 120" aria-hidden="true"><path d="M150 14l8 8 12 4 10 12 6 10-8 12-14 8-18 6-16 14-30 12-26 4-14-6 10-14 26-6 18-14 10-18 4-14 8-10z" fill="#1f1a10" stroke="#f2c14e" stroke-width="1.6"/><g fill="#f2c14e"><path d="M150 40c-4-5-7-8-7-12a7 7 0 0 1 14 0c0 4-3 7-7 12z"/><path d="M118 70c-4-5-7-8-7-12a7 7 0 0 1 14 0c0 4-3 7-7 12z"/><path d="M84 92c-4-5-7-8-7-12a7 7 0 0 1 14 0c0 4-3 7-7 12z"/></g><circle cx="150" cy="40" r="14" fill="none" stroke="#ffe39a" opacity=".5"/></svg>
-    </button>
-
     <div class="gl stats">
       <div><b class="num" id="stN">…</b><span data-t="stN">معلّم مسجّل</span></div>
       <div><b class="num" id="stW">…</b><span data-t="stW">ولاية مغطّاة</span></div>
@@ -330,6 +349,13 @@ pre.msg{white-space:pre-wrap;font:.9rem/1.8 var(--body);background:#0b0b0e;borde
     </div>
 
     <div class="tiles" id="tiles"></div>
+
+    <div class="gl ready" id="ready"></div>
+    <div class="gl daily" id="daily"></div>
+    <section style="display:grid;gap:10px" id="favSec" hidden>
+      <div class="head"><h2 id="favT">❤️ المفضلين</h2></div>
+      <div class="rail" id="favRail"></div>
+    </section>
 
     <section style="display:grid;gap:10px">
       <div class="head"><h2 id="featT">المعلّمين</h2><button class="btn line sm" type="button" id="allBtn" data-t="allB">عرض الكل ‹</button></div>
@@ -349,12 +375,11 @@ pre.msg{white-space:pre-wrap;font:.9rem/1.8 var(--body);background:#0b0b0e;borde
     <footer class="foot"><b data-t="cpy1">© 2026 رخصتي — جميع الحقوق محفوظة</b><br><span data-t="cpy2">سالم الجابري · مسقط، سلطنة عُمان</span><br><a href="https://techlights.app" target="_blank" rel="noopener" dir="ltr" style="color:inherit;font-weight:700">🌐 techlights.app</a><br><span dir="ltr">design.omani1@gmail.com</span></footer>
   </section>
 
-  <!-- ===== الخريطة + البحث ===== -->
-  <section class="view" id="v-map" hidden>
-    <h1 class="vtitle" data-t="mapT">ابحث بالخريطة</h1>
-    <p class="vsub" data-t="mapS">اضغط على ولاية في الخريطة، والرقم على الدبوس هو عدد المعلّمين.</p>
+  <!-- ===== البحث ===== -->
+  <section class="view" id="v-find" hidden>
+    <h1 class="vtitle" data-t="findT">ابحث عن معلّم</h1>
+    <p class="vsub" data-t="findS">اختار محافظتك وولايتك ونوع الجير، وقارن الأسعار.</p>
     <div class="chips" id="govChips"></div>
-    <div class="gl mapwrap"><div id="mapBox"></div><div class="mapinfo" id="mapInfo"></div></div>
     <section class="panel">
       <div class="row2">
         <div><label class="l" for="gov" data-t="govL">المحافظة</label><select id="gov"></select></div>
@@ -437,9 +462,8 @@ const T = {
   joinB:['سجّل كمعلّم سياقة','Join as an instructor'],
   cpy1:['© 2026 رخصتي — جميع الحقوق محفوظة','© 2026 Rukhsati — All rights reserved'], cpy2:['سالم الجابري · مسقط، سلطنة عُمان','Salem Aljabri · Muscat, Sultanate of Oman'],
   hk1:['طريقك نحو','Your road to'], hk2:['رخصة القيادة','a driving licence'], hk3:['يبدأ من هنا','starts here'], heroB:['ابحث الآن','Search now'],
-  mcH:['ابحث بالخريطة','Search on the map'], mcP:['شوف المعلّمين في كل ولاية على خريطة عُمان','See instructors in every wilayat on the map of Oman'], mcB:['🗺️ عرض الخريطة','🗺️ Open map'],
   stN:['معلّم مسجّل','Instructors'], stW:['ولاية مغطّاة','Wilayats covered'], stP:['أقل سعر حصة (ر.ع)','Lowest lesson (OMR)'], allB:['عرض الكل ‹','See all ›'],
-  mapT:['ابحث بالخريطة','Search on the map'], mapS:['اضغط على ولاية في الخريطة، والرقم على الدبوس هو عدد المعلّمين.','Tap a wilayat on the map; the number on a pin is how many instructors cover it.'],
+  findT:['ابحث عن معلّم','Find an instructor'], findS:['اختار محافظتك وولايتك ونوع الجير، وقارن الأسعار.','Pick your governorate, wilayat and gearbox, and compare prices.'],
   bookT:['حصصي','My lessons'], bookS:['تابع مواعيد حصصك وتقدّمك لين الاختبار.','Track your lesson times and progress to the test.'], lrnT:['تعلّم السياقة','Learn to drive']
 };
 const S = Object.assign({ gov:'مسقط', area:'السيب', gear:'any', sex:'any' }, LS.get('rk-s', {}));
@@ -476,6 +500,8 @@ $('area').onchange = e => { S.area=e.target.value; save(); draw(); };
 const covers = d => d.areas.includes(S.area) || d.areas.includes('gov:'+S.gov);
 const areaTxt = d => d.areas.map(a=>a.startsWith('gov:')?L('كل ','All ')+gn(a.slice(4)):gn(a)).join(L('، ',', '));
 const gearTxt = g => g.map(x=>x==='auto'?L('أوتوماتيك','Automatic'):L('عادي','Manual')).join(' + ');
+const isFav = id => LS.get('rk-fav',[]).includes(id);
+function toggleFav(id){ const f = LS.get('rk-fav',[]); const i = f.indexOf(id); i<0 ? f.push(id) : f.splice(i,1); LS.set('rk-fav',f); toast(i<0 ? L('انضاف للمفضلة ❤️','Added to favorites ❤️') : L('انشال من المفضلة','Removed from favorites')); }
 function draw(){ draw0(); if(window.RKUI) RKUI.afterDraw(); }
 function draw0(){
   const hidden = new Set(LS.get('rk-hide', []));
@@ -504,6 +530,7 @@ function draw0(){
           el('button',{class:'btn main',type:'button',text:L('📝 اطلب حصص','📝 Request lessons'),onclick:()=>request(d)}),
           el('button',{class:'btn line',type:'button',text:L('📞 الرقم','📞 Number'),onclick:()=>showNum(d)})),
         el('div',{class:'mod'},
+          el('button',{type:'button',text:(isFav(d.id)?'❤️ ':'🤍 ')+L('مفضّل','Favorite'),onclick:()=>{ toggleFav(d.id); draw(); }}),
           el('button',{type:'button',text:L('🚩 إبلاغ','🚩 Report'),onclick:()=>report(d)}),
           el('button',{type:'button',text:L('🚫 إخفاء','🚫 Hide'),onclick:()=>{ const h=LS.get('rk-hide',[]); h.push(d.id); LS.set('rk-hide',h); draw(); toast(L('انخفى ','Hidden: ')+nm); }})))));
   });
@@ -727,7 +754,7 @@ function learnAccount(){
       A.notes ? el('p',{class:'hint',text:A.notes}) : null,
       el('label',{class:'ck'}, av, el('span',{text:L('طلبي ظاهر للمعلّمين (طفّه لما تلقى معلّم)','Show my request to instructors (turn off once you find one)')})),
       el('button',{class:'btn main',type:'button',text:L('🔎 شوف المعلّمين في ','🔎 See instructors in ')+gn(A.area),onclick:()=>{
-        if(GOV[A.gov]){ S.gov = A.gov; S.area = A.area; LS.set('rk-s', S); } close(); fill(); draw(); if(window.go) go('map');
+        if(GOV[A.gov]){ S.gov = A.gov; S.area = A.area; LS.set('rk-s', S); } close(); fill(); draw(); if(window.go) go('find');
         setTimeout(()=>$('resT')?.scrollIntoView({behavior:'smooth',block:'start'}), 250); }}),
       el('div',{class:'acts'}, el('button',{class:'btn main',type:'button',text:L('✏️ تعديل طلبي','✏️ Edit'),onclick:()=>{ close(); sheet((b2,c2)=>learnForm(b2,c2,A)); }}),
         el('button',{class:'btn line',type:'button',text:L('🔑 رمز الدخول','🔑 Login code'),onclick:()=>copy(LME.code)})),

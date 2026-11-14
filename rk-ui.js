@@ -1,4 +1,4 @@
-// رخصتي — الواجهة الجديدة: التبويبات، الرئيسية، الخريطة، حصصي، تعلّم، الاختبار التجريبي
+// رخصتي — الواجهة: التبويبات، الرئيسية (3D)، البحث، حصصي، تعلّم، مهاراتي، الاختبار التجريبي
 (function(){
 const RL = window.RK_LEARN || { lessons:[], signs:[], quiz:[], note:['',''] };
 const P2 = a => Array.isArray(a) ? a[EN() ? 1 : 0] : a;
@@ -54,80 +54,119 @@ function signSVG(s, n){
 }
 window.signSVG = signSVG;
 
-/* ---------- خريطة عُمان (مبسطة) ---------- */
-const OMAN = [[56.38,24.98],[56.47,24.74],[56.75,24.36],[57.1,23.98],[57.44,23.85],[57.88,23.71],[58.18,23.68],[58.6,23.62],[58.92,23.26],[59.25,22.82],[59.53,22.57],[59.8,22.52],[59.83,22.4],[59.58,21.85],[59.3,21.4],[58.7,20.75],[58.3,20.45],[57.85,19.95],[57.7,19.66],[57.82,19.05],[57.2,18.9],[56.6,18.55],[55.6,17.9],[55.27,17.45],[55.07,17.05],[54.69,16.99],[54.4,17.04],[54.09,17.02],[53.75,16.88],[53.42,16.74],[53.1,16.66],[52.99,16.65],[52.75,17.1],[52.4,17.9],[52.0,19.0],[53.4,19.5],[55.0,20.0],[55.67,22.0],[55.2,22.7],[55.55,23.4],[55.75,24.0],[55.8,24.25],[56.0,24.6],[56.2,24.8]];
-const MASIRAH = [[58.95,20.7],[58.84,20.5],[58.68,20.2],[58.76,20.14],[58.9,20.38],[58.98,20.62]];
-const MUSANDAM = [[56.08,26.05],[56.15,26.22],[56.24,26.4],[56.38,26.38],[56.45,26.25],[56.42,26.05],[56.35,25.88],[56.37,25.62],[56.27,25.62],[56.15,25.82]];
-const WC = {"مسقط":[58.59,23.6],"مطرح":[58.56,23.63],"بوشر":[58.4,23.56],"السيب":[58.18,23.66],"العامرات":[58.5,23.5],"قريات":[58.91,23.26],
- "صلالة":[54.09,17.03],"طاقة":[54.4,17.05],"مرباط":[54.69,17.0],"رخيوت":[53.42,16.76],"ثمريت":[54.03,17.67],"ضلكوت":[53.25,16.72],"المزيونة":[52.67,17.85],"مقشن":[54.89,19.56],"شليم وجزر الحلانيات":[55.6,17.95],"سدح":[55.07,17.06],
- "خصب":[56.25,26.18],"دبا":[56.27,25.64],"بخا":[56.15,26.14],"مدحاء":[56.32,25.28],
- "البريمي":[55.79,24.25],"محضة":[55.97,24.4],"السنينة":[55.91,23.69],
- "نزوى":[57.53,22.93],"بهلاء":[57.3,22.97],"منح":[57.6,22.79],"الحمراء":[57.29,23.11],"أدم":[57.53,22.38],"إزكي":[57.77,22.93],"سمائل":[57.98,23.3],"بدبد":[58.13,23.41],"الجبل الأخضر":[57.67,23.07],
- "صحار":[56.71,24.34],"شناص":[56.47,24.74],"لوى":[56.57,24.53],"صحم":[56.89,24.17],"الخابورة":[57.1,23.97],"السويق":[57.44,23.84],
- "الرستاق":[57.42,23.39],"العوابي":[57.53,23.3],"نخل":[57.83,23.39],"وادي المعاول":[57.75,23.48],"بركاء":[57.89,23.68],"المصنعة":[57.63,23.77],
- "صور":[59.52,22.56],"الكامل والوافي":[59.2,22.22],"جعلان بني بو حسن":[59.33,22.1],"جعلان بني بو علي":[59.35,21.98],"مصيرة":[58.87,20.67],
- "إبراء":[58.53,22.69],"المضيبي":[58.12,22.57],"بدية":[58.8,22.45],"القابل":[58.7,22.57],"وادي بني خالد":[59.09,22.62],"دماء والطائيين":[58.66,23.06],
- "عبري":[56.51,23.23],"ينقل":[56.54,23.59],"ضنك":[56.26,23.55],
- "هيماء":[56.28,19.96],"محوت":[58.2,20.65],"الدقم":[57.7,19.66],"الجازر":[57.0,18.95]};
-const PX = ([lo, la]) => [(lo - 51.7) * 93, (26.7 - la) * 100];
-const FULL = [0, 0, 780, 1040];
-let VB = FULL.slice(), mapGov = null, anim = 0;
-const poly = pts => 'M' + pts.map(p => PX(p).map(v => v.toFixed(1)).join(',')).join('L') + 'Z';
-function govOf(w){ return Object.keys(GOV).find(g => GOV[g].includes(w)); }
-function countIn(w){ const g = govOf(w), hidden = new Set(LS.get('rk-hide', [])); return DATA.filter(d => !hidden.has(d.id) && (d.areas.includes(w) || d.areas.includes('gov:' + g))).length; }
-function govBox(g){
-  const pts = GOV[g].map(w => PX(WC[w] || [57, 22]));
-  let x0 = Math.min(...pts.map(p => p[0])), x1 = Math.max(...pts.map(p => p[0])), y0 = Math.min(...pts.map(p => p[1])), y1 = Math.max(...pts.map(p => p[1]));
-  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, w = Math.max(x1 - x0 + 90, 150), h = Math.max(y1 - y0 + 110, w * 1.3);
-  return [cx - w / 2, cy - h / 2, w, h];
+/* ---------- البحث: شرائح المحافظات ---------- */
+function findView(){
+  $('govChips').replaceChildren(...Object.keys(GOV).map(g => el('button',{type:'button','aria-pressed':String(S.gov===g),text:gn(g),onclick:()=>{ S.gov = g; if(!GOV[g].includes(S.area)) S.area = GOV[g][0]; save(); fill(); draw(); findView(); }})));
 }
-function zoomTo(box){
-  const from = VB.slice(), t0 = performance.now(), dur = 420; cancelAnimationFrame(anim);
-  const step = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); VB = from.map((v, i) => v + (box[i] - v) * e); drawMap(); if(k < 1) anim = requestAnimationFrame(step); };
-  anim = requestAnimationFrame(step);
+
+/* ---------- ميل ثلاثي الأبعاد للبطاقات ---------- */
+function tilt(card){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const reset = () => card.style.transform = '';
+  card.addEventListener('pointermove', e => { const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; card.style.transform = `perspective(600px) rotateY(${(x*10).toFixed(1)}deg) rotateX(${(-y*10).toFixed(1)}deg) translateZ(4px)`; });
+  card.addEventListener('pointerleave', reset); card.addEventListener('pointercancel', reset); card.addEventListener('pointerup', reset);
 }
-function drawMap(){
-  const svg = $('omMap'); if(!svg) return;
-  const r = svg.getBoundingClientRect(), s = Math.max(VB[2] / (r.width || 350), VB[3] / (r.height || 460)) * 0.9;
-  svg.setAttribute('viewBox', VB.map(v => v.toFixed(1)).join(' '));
-  const pins = [];
-  Object.keys(WC).forEach(w => {
-    const [x, y] = PX(WC[w]), n = countIn(w), sel = w === S.area;
-    if(n){
-      pins.push(`<g class="pin${sel?' sel':''}" data-w="${w}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${s.toFixed(3)})">${sel?'<circle r="26" class="pulse"/>':''}<path d="M0 0c-9-12-16-19-16-28a16 16 0 0 1 32 0c0 9-7 16-16 28z" class="pp"/><text y="-23" text-anchor="middle">${n}</text></g>`);
-    } else {
-      pins.push(`<g class="dot${sel?' sel':''}" data-w="${w}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${s.toFixed(3)})">${sel?'<circle r="18" class="pulse"/>':''}<circle r="${sel?7:4.5}"/><circle r="14" fill="transparent"/></g>`);
-    }
-    if(sel) pins.push(`<g transform="translate(${x.toFixed(1)} ${(y + 22 * s).toFixed(1)}) scale(${s.toFixed(3)})"><text class="lbl" text-anchor="middle">${gn(w)}</text></g>`);
+
+/* ---------- المهارات ---------- */
+const SKILLS = [
+  ['🚗', ['التحكم بالسيارة والانطلاق','Car control & moving off'], ['الكلتش أو البنزين بسلاسة، والوقوف بهدوء','Smooth pedals and gentle stops']],
+  ['↩️', ['الرجوع للخلف','Reversing'], ['باستخدام المرايا والالتفات','Using mirrors and looking back']],
+  ['🅿️', ['الوقوف الموازي','Parallel parking'], ['بين سيارتين بدون ما تلمس الرصيف','Between two cars without touching the kerb']],
+  ['⛰️', ['الطلوع في المرتفع','Hill start'], ['بدون ما ترجع السيارة لورا','Without rolling back']],
+  ['🔄', ['الدوّارات','Roundabouts'], ['المسار الصحيح والأولوية والإشارة','Right lane, priority and signalling']],
+  ['🚦', ['التقاطعات والإشارات','Junctions & lights'], ['الوقوف عند الخط والانعطاف الآمن','Stopping at the line and turning safely']],
+  ['↔️', ['تغيير المسار','Changing lanes'], ['المرايا والإشارة والنقطة العمياء','Mirrors, signal and blind spot']],
+  ['🛣️', ['الطريق السريع','Highway driving'], ['الدخول والخروج والمسافة الآمنة','Merging, exiting and safe gaps']],
+  ['🌙', ['السياقة بالليل','Night driving'], ['الأنوار والانتباه للحيوانات','Lights and watching for animals']],
+  ['🔁', ['الدوران للخلف (U)','U-turns'], ['في المكان المسموح وبأمان','Only where allowed, safely']]
+];
+const LVL = [['ما بديت','Not started'],['أتدرب','Practising'],['أتقنتها ✓','Mastered ✓']];
+const skills = () => LS.get('rk-skills', {});
+function skillScore(){ const k = skills(); return SKILLS.reduce((a, _, i) => a + (k[i]||0), 0) / (SKILLS.length * 2); }
+function skillsView(v){
+  const k = skills(), m = SKILLS.filter((_, i) => k[i] === 2).length;
+  v.append(el('div',{class:'gl prog'},
+    el('div',{class:'prog-h'}, el('div',{}, el('b',{class:'num',text:m+' / '+SKILLS.length}), el('span',{text:L(' مهارة أتقنتها',' skills mastered')}))),
+    el('div',{class:'bar'}, el('i',{style:'width:'+Math.round(skillScore()*100)+'%'})),
+    el('p',{class:'hint',text:L('اضغط على المهارة بعد كل حصة عشان تغيّر مستواك. قول لمعلّمك يركّز على اللي ما أتقنتها.','Tap a skill after each lesson to update it. Ask your instructor to focus on the ones you haven’t mastered.')})));
+  SKILLS.forEach(([icn, t, d], i) => {
+    const lv = k[i] || 0;
+    const b = el('button',{type:'button',class:'gl skl',onclick:()=>{ const s2 = skills(); s2[i] = ((s2[i]||0) + 1) % 3; LS.set('rk-skills', s2); if(s2[i] === 2) toast(L('أحسنت! أتقنت ','Well done! Mastered: ')+P2(t)+' 🏆'); learnView('skill'); }},
+      el('span',{class:'si',text:icn}), el('span',{}, el('b',{text:P2(t)}), el('small',{text:P2(d)})), el('span',{class:'lvl l'+lv,text:P2(LVL[lv])}));
+    v.append(b);
   });
-  $('omPins').innerHTML = pins.join('');
 }
-function mapView(){
-  const v = $('v-map');
-  if(!v.dataset.ok){
-    v.dataset.ok = 1;
-    $('mapBox').innerHTML = `<svg id="omMap" viewBox="${FULL.join(' ')}" preserveAspectRatio="xMidYMid meet">
-      <defs><linearGradient id="land" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2418"/><stop offset="1" stop-color="#16130d"/></linearGradient>
-      <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0v40" fill="none" stroke="rgba(242,193,78,.06)"/></pattern></defs>
-      <rect x="-400" y="-400" width="1600" height="1900" fill="url(#grid)"/>
-      <g filter="url(#glow)"><path d="${poly(OMAN)}" fill="url(#land)" stroke="#f2c14e" stroke-width="2.4" stroke-linejoin="round"/><path d="${poly(MUSANDAM)}" fill="url(#land)" stroke="#f2c14e" stroke-width="2"/><path d="${poly(MASIRAH)}" fill="url(#land)" stroke="#f2c14e" stroke-width="1.6"/></g>
-      <g id="omPins"></g></svg>`;
-    $('omMap').addEventListener('click', e => { const g = e.target.closest('[data-w]'); if(!g) return; const w = g.dataset.w; S.gov = govOf(w); S.area = w; save(); fill(); draw(); mapInfo(); });
-  }
-  $('govChips').replaceChildren(el('button',{type:'button','aria-pressed':String(!mapGov),text:L('كل عُمان','All Oman'),onclick:()=>{ mapGov = null; zoomTo(FULL); mapView(); }}),
-    ...Object.keys(GOV).map(g => el('button',{type:'button','aria-pressed':String(mapGov===g),text:gn(g),onclick:()=>{ mapGov = g; S.gov = g; if(!GOV[g].includes(S.area)) S.area = GOV[g][0]; save(); fill(); draw(); zoomTo(govBox(g)); mapView(); }})));
-  drawMap(); mapInfo();
+
+/* ---------- جاهزية الاختبار ---------- */
+function readiness(){
+  const done = lessons().filter(x => x.done).length, goal = LS.get('rk-goal', 0) || 20;
+  const N = Math.min(15, RL.quiz.length), best = LS.get('rk-quiz-best', 0) || 0;
+  const parts = [ Math.min(1, done / goal), skillScore(), N ? best / N : 0 ];
+  return { pct: Math.round(parts[0]*40 + parts[1]*35 + parts[2]*25), parts, done, goal, best, N };
 }
-function mapInfo(){
-  const n = countIn(S.area), box = $('mapInfo'); if(!box) return;
-  box.replaceChildren(el('div',{}, el('b',{text:'📍 '+gn(S.area)+' · '+gn(S.gov)}), el('span',{text:n ? (EN() ? n+' instructor'+(n>1?'s':'') : n+(n>2?' معلّمين':n===2?' معلّمَين':' معلّم')) : L('ما فيه معلّمين للحين','No instructors yet')})),
-    el('button',{class:'btn sign sm',type:'button',text:L('عرض القائمة ↓','Show list ↓'),onclick:()=>$('resT').scrollIntoView({behavior:'smooth',block:'start'})}));
+function readyDraw(){
+  const box = $('ready'); if(!box) return;
+  const r = readiness(), weak = r.parts.indexOf(Math.min(...r.parts));
+  const msg = r.pct >= 85 ? L('أنت جاهز تقريبًا! راجع الاختبار التجريبي واحجز موعدك 🎉','You’re nearly ready! Review the practice test and book your test 🎉')
+    : r.pct >= 50 ? L('ماشي زين 👏 كمّل على اللي ناقصك.','Going well 👏 keep working on the gaps.') : L('بداية الطريق 🚗 خطوة خطوة وبتوصل.','Just starting 🚗 step by step you’ll get there.');
+  const row = (t, v, txt) => el('div',{class:'rk-row'}, el('span',{text:t}), el('div',{class:'bar sm'}, el('i',{style:'width:'+Math.round(v*100)+'%'})), el('span',{class:'num',text:txt}));
+  const ring = el('div',{class:'ring',style:'--p:'+r.pct}, el('b',{class:'num',text:r.pct+'%'}), el('small',{text:L('جاهزيتك','Ready')}));
+  const go2 = [()=>go('book'), ()=>go('learn','skill'), ()=>go('learn','quiz')][weak];
+  box.replaceChildren(ring, el('div',{class:'rk'},
+    el('h3',{text:L('جاهزيتك للاختبار','Test readiness')}),
+    row(L('الحصص','Lessons'), r.parts[0], r.done+'/'+r.goal),
+    row(L('المهارات','Skills'), r.parts[1], Math.round(r.parts[1]*100)+'%'),
+    row(L('الاختبار','Quiz'), r.parts[2], r.best+'/'+r.N),
+    el('p',{class:'hint',style:'margin:2px 0 0',text:msg}),
+    el('button',{class:'btn line sm',type:'button',style:'justify-self:start',text:[L('📅 أضف حصة','📅 Add a lesson'),L('🎯 حدّث مهاراتك','🎯 Update skills'),L('📝 جرّب الاختبار','📝 Try the quiz')][weak],onclick:go2})));
+}
+
+/* ---------- سؤال اليوم ---------- */
+function dailyDraw(){
+  const box = $('daily'); if(!box || !RL.quiz.length) return;
+  const day = Math.floor((Date.now() + 4*36e5) / 864e5), qi = day % RL.quiz.length, q = RL.quiz[qi];
+  const st = LS.get('rk-daily', {}), mine = st.day === day ? st.pick : null;
+  const streak = LS.get('rk-streak', { n:0, last:0 });
+  const opts = el('div',{class:'qopts'});
+  q.o.forEach((o, oi) => {
+    const b = el('button',{type:'button',class:'qo',text:P2(o),onclick:()=>{
+      if(LS.get('rk-daily', {}).day === day) return;
+      LS.set('rk-daily', { day, pick: oi });
+      if(oi === q.a){ const s2 = LS.get('rk-streak', { n:0, last:0 }); LS.set('rk-streak', { n: s2.last === day - 1 ? s2.n + 1 : 1, last: day }); }
+      else { const w = LS.get('rk-wrong', []); if(!w.includes(qi)) LS.set('rk-wrong', w.concat(qi)); }
+      dailyDraw(); }});
+    if(mine != null){ b.disabled = true; if(oi === q.a) b.classList.add('right'); else if(oi === mine) b.classList.add('wrong'); }
+    opts.append(b);
+  });
+  const sn = streak.last >= day - 1 ? streak.n : 0;
+  box.replaceChildren(...[
+    el('div',{class:'dq-h'}, el('b',{text:L('🌟 سؤال اليوم','🌟 Question of the day')}), sn ? el('span',{class:'tag ok',text:'🔥 '+sn+L(' يوم متتالي',' day streak')}) : null),
+    q.sign ? H('div',{class:'qsign'}, signSVG(q.sign, (RL.signs.find(s=>s.s===q.sign)||{}).n)) : null,
+    el('h4',{text:P2(q.q)}), opts,
+    mine != null ? el('p',{class:'qwhy '+(mine===q.a?'ok':'no'),text:(mine===q.a?L('✅ صح! ','✅ Correct! '):L('❌ غلط. ','❌ Not quite. '))+P2(q.w)+L(' · سؤال جديد بكره',' · New question tomorrow')}) : null].filter(Boolean));
+}
+
+/* ---------- المفضلين ---------- */
+function instCard(d){
+  const ini = d.name.replace(/^(أم|أبو|Umm|Abu)\s+/,'').trim()[0];
+  const area = d.areas[0] ? (d.areas[0].startsWith('gov:') ? L('كل ','All ') + gn(d.areas[0].slice(4)) : gn(d.areas[0])) : '';
+  const c = el('article',{class:'fc'+(d.sex==='f'?' f':'')},
+    el('div',{class:'fc-top'}, el('div',{class:'fc-av',text:ini}),
+      el('div',{style:'display:grid;gap:4px;justify-items:end'}, el('button',{type:'button',class:'fav','aria-label':L('مفضّل','Favorite'),text:isFav(d.id)?'❤️':'🤍',onclick:()=>{ toggleFav(d.id); homeDraw(); }}),
+        el('span',{class:'tag '+(d.available?'ok':'busy'),text:d.available?L('يستقبل','Available'):L('مشغول','Busy')}))),
+    el('h4',{text:d.name}),
+    H('p',{class:'fc-l'}, ic('pin') + '<span></span>'),
+    H('p',{class:'fc-l'}, ic('gear') + '<span></span>'),
+    el('p',{class:'fc-p'}, el('b',{class:'num',text:omr(d.price)}), el('span',{text:' '+L('ر.ع / حصة','OMR / lesson')})),
+    el('button',{class:'btn sign',type:'button',text:L('💬 تواصل الآن','💬 Contact'),onclick:()=>request(d)}));
+  const ls = c.querySelectorAll('.fc-l span'); ls[0].textContent = area; ls[1].textContent = gearTxt(d.gear);
+  tilt(c); return c;
 }
 
 /* ---------- الرئيسية ---------- */
 function homeDraw(){
   if(!$('v-home')) return;
+  readyDraw(); dailyDraw(); if(!LOADING) favDraw();
   const hidden = new Set(LS.get('rk-hide', []));
   const all = DATA.filter(d => !hidden.has(d.id));
   const cov = new Set(); all.forEach(d => d.areas.forEach(a => a.startsWith('gov:') ? (GOV[a.slice(4)]||[]).forEach(w => cov.add(w)) : cov.add(a)));
@@ -142,18 +181,13 @@ function homeDraw(){
   const box = $('feat'); box.replaceChildren();
   if(LOADING){ box.append(el('div',{class:'empty',text:L('جاري التحميل…','Loading…')})); return; }
   if(!list.length){ box.append(el('div',{class:'empty',text:L('للحين ما فيه معلّمين مسجّلين. كن أول واحد!','No instructors listed yet. Be the first!')})); return; }
-  list.forEach(d => {
-    const ini = d.name.replace(/^(أم|أبو|Umm|Abu)\s+/,'').trim()[0];
-    const area = d.areas[0] ? (d.areas[0].startsWith('gov:') ? L('كل ','All ') + gn(d.areas[0].slice(4)) : gn(d.areas[0])) : '';
-    box.append(el('article',{class:'fc'+(d.sex==='f'?' f':'')},
-      el('div',{class:'fc-top'}, el('div',{class:'fc-av',text:ini}), el('span',{class:'tag '+(d.available?'ok':'busy'),text:d.available?L('يستقبل','Available'):L('مشغول','Busy')})),
-      el('h4',{text:d.name}),
-      H('p',{class:'fc-l'}, ic('pin') + '<span></span>'),
-      H('p',{class:'fc-l'}, ic('gear') + '<span></span>'),
-      el('p',{class:'fc-p'}, el('b',{class:'num',text:omr(d.price)}), el('span',{text:' '+L('ر.ع / حصة','OMR / lesson')})),
-      el('button',{class:'btn sign',type:'button',text:L('💬 تواصل الآن','💬 Contact'),onclick:()=>request(d)})));
-    const ls = box.lastChild.querySelectorAll('.fc-l span'); ls[0].textContent = area; ls[1].textContent = gearTxt(d.gear);
-  });
+  list.forEach(d => box.append(instCard(d)));
+}
+function favDraw(){
+  const hidden = new Set(LS.get('rk-hide', [])), f = LS.get('rk-fav', []);
+  const favs = DATA.filter(d => f.includes(d.id) && !hidden.has(d.id));
+  $('favSec').hidden = !favs.length; $('favT').textContent = L('❤️ معلّميني المفضلين','❤️ My favorite instructors');
+  $('favRail').replaceChildren(...favs.map(instCard));
 }
 
 /* ---------- حصصي ---------- */
@@ -194,6 +228,11 @@ function bookView(){
   v.append(el('h3',{class:'sec',text:L('الحصص الجاية','Upcoming lessons')}));
   v.append(...(up.length ? up.map(card) : [el('div',{class:'empty',text:L('ما فيه مواعيد. أضف موعد حصتك الجاية وتابعه هنا 📅','No lessons yet. Add your next lesson and track it here 📅')})]));
   if(past.length){ v.append(el('h3',{class:'sec',text:L('حصص حضرتها','Completed')})); v.append(...past.map(card)); }
+  const TD = [[L('البطاقة الشخصية سارية','Valid ID card')],[L('ملف أو شهادة التدريب من معلّمك','Training file / certificate from your instructor')],[L('نظارتك الطبية إذا تحتاجها','Your glasses if you need them')],[L('تأكدت من موعد الاختبار ومكانه','Confirmed test time and place')],[L('راجعت الإشارات والاختبار التجريبي','Reviewed signs and the practice test')],[L('نمت زين، وبوصل قبل الموعد بربع ساعة','Slept well, arriving 15 minutes early')]];
+  const td = LS.get('rk-testday', []);
+  v.append(el('h3',{class:'sec',text:L('🎒 قائمة يوم الاختبار','🎒 Test-day checklist')}));
+  v.append(el('div',{class:'gl',style:'padding:4px 0'}, ...TD.map(([t], i) => el('button',{type:'button',class:'chk'+(td.includes(i)?' on':''),onclick:()=>{ const x = LS.get('rk-testday', []); const k = x.indexOf(i); k<0 ? x.push(i) : x.splice(k,1); LS.set('rk-testday', x); bookView(); }}, el('i',{text:td.includes(i)?'✓':''}), el('span',{text:t})))));
+  v.append(el('p',{class:'hint',text:L('ℹ️ قائمة عامة للتذكير. تأكد من المتطلبات الرسمية من شرطة عُمان السلطانية.','ℹ️ A general reminder list. Check the official requirements with the Royal Oman Police.')}));
   v.append(el('p',{class:'hint center',text:L('مواعيدك محفوظة في جوالك بس، وما توصل لأحد.','Your lessons are saved on your phone only.')}));
 }
 function setGoal(){
@@ -231,7 +270,7 @@ function addLesson(){
 let LT = 'les', QZ = null;
 function learnView(tab){
   if(tab) LT = tab;
-  $('lrnSeg').replaceChildren(...[['les',L('📖 الدروس','📖 Lessons')],['sig',L('🚸 الإشارات','🚸 Signs')],['quiz',L('📝 اختبار تجريبي','📝 Practice test')]].map(([k,t]) => el('button',{type:'button','aria-pressed':String(LT===k),text:t,onclick:()=>learnView(k)})));
+  $('lrnSeg').replaceChildren(...[['les',L('📖 الدروس','📖 Lessons')],['skill',L('🎯 مهاراتي','🎯 My skills')],['sig',L('🚸 الإشارات','🚸 Signs')],['quiz',L('📝 الاختبار','📝 Test')]].map(([k,t]) => el('button',{type:'button','aria-pressed':String(LT===k),text:t,onclick:()=>learnView(k)})));
   const v = $('lrnBody'); v.replaceChildren();
   if(LT === 'les'){
     v.append(el('p',{class:'note',text:'ℹ️ '+P2(RL.note)}));
@@ -246,7 +285,8 @@ function learnView(tab){
     RL.signs.forEach(x => { const c = el('button',{type:'button',class:'gl sc',onclick:()=>{ sheet((b,close)=>{ b.append(H('div',{class:'sbig'}, signSVG(x.s, x.n)), el('h3',{class:'center',text:P2(x.t)}), el('p',{class:'center',text:P2(x.d)}), closeBtn(close)); }); }});
       c.innerHTML = signSVG(x.s, x.n); c.append(el('span',{text:P2(x.t)})); g.append(c); });
     v.append(g);
-  } else quizView();
+  } else if(LT === 'skill') skillsView(v);
+  else quizView();
 }
 const shuf = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
 function quizView(){
@@ -258,13 +298,14 @@ function quizView(){
       el('h3',{text:L('اختبار تجريبي','Practice test')}),
       el('p',{text:L(N+' سؤال عشوائي عن الإشارات وقواعد السياقة الآمنة.',N+' random questions on signs and safe-driving rules.')}),
       best != null ? el('p',{class:'hint',text:L('أفضل نتيجة لك: ','Your best: ')+best+' / '+N}) : null,
-      el('button',{class:'btn sign wide',type:'button',text:L('ابدأ الاختبار ▶','Start ▶'),onclick:()=>{ QZ = { qs: shuf(RL.quiz).slice(0, N).map(q => ({ ...q, ord: shuf(q.o.map((_, i) => i)) })), i:0, score:0, wrong:[], pick:null }; quizView(); }}),
+      el('button',{class:'btn sign wide',type:'button',text:L('ابدأ الاختبار ▶','Start ▶'),onclick:()=>{ QZ = { qs: shuf(RL.quiz.map((q, qi) => ({ ...q, qi }))).slice(0, N).map(q => ({ ...q, ord: shuf(q.o.map((_, i) => i)) })), i:0, score:0, wrong:[], pick:null }; quizView(); }}),
+      LS.get('rk-wrong', []).length ? el('button',{class:'btn line wide',type:'button',text:L('🔁 راجع أخطائي (','🔁 Review my mistakes (')+LS.get('rk-wrong', []).length+')',onclick:()=>{ const w = LS.get('rk-wrong', []); QZ = { review:true, qs: shuf(w.map(qi => ({ ...RL.quiz[qi], qi })).filter(q => q.o)).map(q => ({ ...q, ord: shuf(q.o.map((_, i) => i)) })), i:0, score:0, wrong:[], pick:null }; quizView(); }}) : null,
       el('p',{class:'note',text:'ℹ️ '+P2(RL.note)})));
     return;
   }
   if(QZ.i >= QZ.qs.length){
     const pct = Math.round(QZ.score / QZ.qs.length * 100);
-    if(best == null || QZ.score > best) LS.set('rk-quiz-best', QZ.score);
+    if(!QZ.review && (best == null || QZ.score > best)) LS.set('rk-quiz-best', QZ.score);
     v.append(el('div',{class:'gl qstart'},
       el('div',{class:'qscore num',text:QZ.score+' / '+QZ.qs.length}),
       el('h3',{text: pct >= 90 ? L('ممتاز! 🏆','Excellent! 🏆') : pct >= 70 ? L('زين جدًا 👏','Very good 👏') : L('تحتاج مراجعة شوي 📖','Needs a bit more review 📖')}),
@@ -284,6 +325,7 @@ function quizView(){
     const b = el('button',{type:'button',class:'qo',text:P2(q.o[oi]),onclick:()=>{
       if(QZ.pick != null) return; QZ.pick = oi;
       const ok = oi === q.a; if(ok) QZ.score++; else QZ.wrong.push(q);
+      const W = LS.get('rk-wrong', []); if(ok){ if(QZ.review) LS.set('rk-wrong', W.filter(x => x !== q.qi)); } else if(!W.includes(q.qi)) LS.set('rk-wrong', W.concat(q.qi));
       opts.querySelectorAll('.qo').forEach((x, k) => { const id = q.ord[k]; if(id === q.a) x.classList.add('right'); else if(id === oi) x.classList.add('wrong'); x.disabled = true; });
       box.append(el('p',{class:'qwhy '+(ok?'ok':'no'),text:(ok?L('✅ صح! ','✅ Correct! '):L('❌ غلط. ','❌ Not quite. '))+P2(q.w)}),
         el('button',{class:'btn sign wide',type:'button',text:QZ.i+1<QZ.qs.length?L('التالي ←','Next →'):L('النتيجة 🏁','Result 🏁'),onclick:()=>{ QZ.i++; QZ.pick=null; quizView(); window.scrollTo({top:0}); }}));
@@ -301,7 +343,7 @@ function go(name, sub){
   document.querySelectorAll('.view').forEach(x => x.hidden = x.id !== 'v-' + name);
   document.querySelectorAll('#tabbar [data-go]').forEach(b => b.setAttribute('aria-current', b.dataset.go === name ? 'page' : 'false'));
   window.scrollTo({ top: 0 });
-  if(name === 'map') mapView();
+  if(name === 'find') findView();
   if(name === 'book') bookView();
   if(name === 'learn') learnView(sub);
   if(name === 'home') homeDraw();
@@ -309,21 +351,20 @@ function go(name, sub){
 window.go = go;
 
 function tabbar(){
-  const items = [['home','home',L('الرئيسية','Home')],['map','pin',L('الخريطة','Map')],['book','cal',L('حصصي','Lessons')],['learn','book',L('تعلّم','Learn')],['acct','user',L('حسابي','Account')]];
+  const items = [['home','home',L('الرئيسية','Home')],['find','search',L('ابحث','Search')],['book','cal',L('حصصي','Lessons')],['learn','book',L('تعلّم','Learn')],['acct','user',L('حسابي','Account')]];
   $('tabbar').innerHTML = items.map(([k, i, t]) => `<button type="button" data-go="${k}" aria-current="${CUR===k?'page':'false'}">${ic(i)}<span>${t}</span></button>`).join('');
   $('tabbar').onclick = e => { const b = e.target.closest('[data-go]'); if(b) go(b.dataset.go); };
 }
 function homeStatic(){
-  $('heroBtn').onclick = () => go('map');
-  $('mapCta').onclick = () => go('map');
-  $('allBtn').onclick = () => go('map');
+  $('heroBtn').onclick = () => go('find');
+  $('allBtn').onclick = () => go('find');
   const tiles = [['book',L('تعلّم السياقة','Learn to drive'),()=>go('learn','les')],['quiz',L('اختبار تجريبي','Practice test'),()=>go('learn','quiz')],['sign',L('الإشارات','Road signs'),()=>go('learn','sig')],['cal',L('حصصي','My lessons'),()=>go('book')]];
   $('tiles').replaceChildren(...tiles.map(([i, t, f]) => { const b = el('button',{type:'button',class:'tile',onclick:f}); b.innerHTML = `<span class="tile-i">${ic(i)}</span>`; b.append(el('span',{text:t})); return b; }));
 }
 window.RKUI = {
-  afterDraw(){ homeDraw(); if(CUR === 'map'){ drawMap(); mapInfo(); } },
-  lang(){ tabbar(); homeStatic(); if(CUR === 'map') mapView(); if(CUR === 'book') bookView(); if(CUR === 'learn') learnView(); homeDraw(); }
+  afterDraw(){ homeDraw(); if(CUR === 'find') findView(); },
+  lang(){ tabbar(); homeStatic(); if(CUR === 'find') findView(); if(CUR === 'book') bookView(); if(CUR === 'learn') learnView(); homeDraw(); }
 };
 RKUI.lang();
-go(location.hash === '#map' ? 'map' : location.hash === '#learn' ? 'learn' : location.hash === '#book' ? 'book' : 'home');
+go(/^#(map|find)$/.test(location.hash) ? 'find' : location.hash === '#learn' ? 'learn' : location.hash === '#book' ? 'book' : 'home');
 })();
